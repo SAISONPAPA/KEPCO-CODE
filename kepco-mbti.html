@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>나는 어떤 한전인? | KEPCO 직원 유형 테스트</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:      #0B2559;
+      --navy-mid:  #1A3A7A;
+      --navy-light:#2B52A3;
+      --accent:    #E8A400;
+      --white:     #FFFFFF;
+      --gray-100:  #F4F6FA;
+      --gray-200:  #E2E8F0;
+      --gray-500:  #64748B;
+      --gray-800:  #1E293B;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 56px;
+    }
+    .nav-logo { color: var(--white); font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .nav-logo .badge { background: var(--accent); color: var(--navy); font-size: 0.65rem; font-weight: 900; padding: 2px 7px; border-radius: 20px; }
+    .nav-back { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* WRAPPER */
+    .wrapper { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* INTRO */
+    #screen-intro { text-align: center; }
+    .intro-emoji { font-size: 4rem; margin-bottom: 20px; display: block; }
+    .intro-tag { display: inline-block; background: var(--accent); color: var(--navy); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; margin-bottom: 16px; }
+    .intro-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 900; color: var(--navy); line-height: 1.3; margin-bottom: 12px; }
+    .intro-title span { color: var(--accent); }
+    .intro-desc { font-size: 0.95rem; color: var(--gray-500); line-height: 1.8; margin-bottom: 12px; }
+    .intro-meta { font-size: 0.82rem; color: var(--gray-500); margin-bottom: 36px; }
+    .intro-meta span { display: inline-block; background: var(--white); border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px; margin: 3px; }
+    .btn-start {
+      display: inline-block; background: var(--navy); color: var(--white);
+      font-size: 1rem; font-weight: 700; padding: 16px 48px; border-radius: 50px;
+      border: none; cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 20px rgba(11,37,89,0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(11,37,89,0.3); }
+
+    /* PROGRESS */
+    #screen-quiz { display: none; }
+    .progress-wrap { margin-bottom: 28px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--gray-500); margin-bottom: 8px; }
+    .progress-bar { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--navy-light)); border-radius: 3px; transition: width 0.4s ease; }
+
+    /* QUESTION CARD */
+    .q-card {
+      background: var(--white); border-radius: 20px; padding: 36px 32px;
+      box-shadow: 0 4px 24px rgba(11,37,89,0.08);
+      margin-bottom: 20px;
+    }
+    .q-num { font-size: 0.72rem; font-weight: 700; color: var(--navy-light); letter-spacing: 0.12em; margin-bottom: 12px; }
+    .q-text { font-size: 1.1rem; font-weight: 700; color: var(--navy); line-height: 1.6; }
+
+    /* OPTIONS */
+    .options { display: flex; flex-direction: column; gap: 12px; }
+    .opt-btn {
+      background: var(--white); border: 2px solid var(--gray-200);
+      border-radius: 14px; padding: 16px 20px;
+      font-size: 0.95rem; font-weight: 500; color: var(--gray-800);
+      text-align: left; cursor: pointer; font-family: inherit;
+      transition: all 0.18s; line-height: 1.5;
+    }
+    .opt-btn:hover { border-color: var(--navy-light); background: var(--gray-100); color: var(--navy); transform: translateX(4px); }
+    .opt-btn.selected { border-color: var(--navy); background: var(--navy); color: var(--white); }
+
+    /* RESULT */
+    #screen-result { display: none; }
+    .result-card {
+      background: var(--white); border-radius: 24px;
+      overflow: hidden; box-shadow: 0 8px 40px rgba(11,37,89,0.12);
+      margin-bottom: 24px;
+    }
+    .result-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 40px 32px 32px; text-align: center; color: var(--white);
+    }
+    .result-emoji { font-size: 4.5rem; display: block; margin-bottom: 16px; }
+    .result-type-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 8px; }
+    .result-type-name { font-size: 1.8rem; font-weight: 900; margin-bottom: 6px; }
+    .result-code-badge {
+      display: inline-block; background: var(--accent); color: var(--navy);
+      font-size: 0.75rem; font-weight: 900; padding: 4px 14px; border-radius: 20px;
+    }
+    .result-body { padding: 28px 32px; }
+    .result-slogan {
+      font-size: 1rem; font-weight: 700; color: var(--navy);
+      background: var(--gray-100); border-left: 4px solid var(--accent);
+      padding: 14px 18px; border-radius: 0 10px 10px 0;
+      margin-bottom: 20px; line-height: 1.6;
+    }
+    .result-desc { font-size: 0.93rem; color: var(--gray-500); line-height: 1.85; margin-bottom: 24px; }
+    .result-strengths h4 { font-size: 0.8rem; font-weight: 700; color: var(--navy-light); letter-spacing: 0.08em; margin-bottom: 12px; }
+    .strength-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .strength-tag { background: var(--gray-100); color: var(--navy); font-size: 0.8rem; font-weight: 600; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gray-200); }
+
+    /* SCORE BAR */
+    .score-section h4 { font-size: 0.8rem; font-weight: 700; color: var(--navy-light); letter-spacing: 0.08em; margin-bottom: 14px; }
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.82rem; }
+    .score-label { width: 70px; color: var(--gray-800); font-weight: 600; flex-shrink: 0; }
+    .score-bar-wrap { flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--navy-light)); border-radius: 4px; transition: width 0.6s ease; }
+    .score-val { width: 30px; text-align: right; color: var(--gray-500); font-size: 0.75rem; }
+
+    /* BUTTONS */
+    .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-retry {
+      flex: 1; min-width: 140px; background: var(--white); color: var(--navy);
+      border: 2px solid var(--navy); border-radius: 50px; padding: 13px 24px;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn-retry:hover { background: var(--gray-100); }
+    .btn-home {
+      flex: 1; min-width: 140px; background: var(--navy); color: var(--white);
+      border: none; border-radius: 50px; padding: 13px 24px;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit;
+      text-decoration: none; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-home:hover { background: var(--navy-mid); }
+
+    /* COMPATIBLE */
+    .compatible-section { background: var(--white); border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(11,37,89,0.06); }
+    .compatible-section h4 { font-size: 0.8rem; font-weight: 700; color: var(--navy-light); letter-spacing: 0.08em; margin-bottom: 16px; }
+    .compatible-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .compat-card { background: var(--gray-100); border-radius: 12px; padding: 14px; text-align: center; }
+    .compat-emoji { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+    .compat-name { font-size: 0.82rem; font-weight: 700; color: var(--navy); }
+    .compat-label { font-size: 0.7rem; color: var(--gray-500); margin-top: 2px; }
+
+    @media (max-width: 480px) {
+      .q-card { padding: 24px 20px; }
+      .result-body { padding: 20px; }
+      .result-header { padding: 28px 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">KEPCO CODE <span class="badge">'26</span></a>
+  <a class="nav-back" href="index.html">← 홈으로</a>
+</nav>
+
+<div class="wrapper">
+
+  <!-- ── INTRO ── -->
+  <div id="screen-intro">
+    <span class="intro-emoji">⚡</span>
+    <div class="intro-tag">KEPCO 직원 유형 테스트</div>
+    <h1 class="intro-title">나는 어떤<br><span>한전인</span>일까?</h1>
+    <p class="intro-desc">
+      12개의 질문으로 알아보는<br>
+      나의 한전 직원 캐릭터 유형!<br>
+      KEPCO CODE 10가지와 연결됩니다.
+    </p>
+    <div class="intro-meta">
+      <span>⏱ 약 3분</span>
+      <span>📋 12문항</span>
+      <span>🎯 10가지 유형</span>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">테스트 시작하기 →</button>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-text">1 / 12</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num" id="q-num">Q01</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="options" id="options-container"></div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="screen-result">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="result-emoji" id="res-emoji"></span>
+        <div class="result-type-label">당신의 한전 직원 유형</div>
+        <div class="result-type-name" id="res-name"></div>
+        <div class="result-code-badge" id="res-code"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-slogan" id="res-slogan"></div>
+        <div class="result-desc" id="res-desc"></div>
+        <div class="result-strengths">
+          <h4>✨ 나의 강점 키워드</h4>
+          <div class="strength-list" id="res-strengths"></div>
+        </div>
+        <div class="score-section">
+          <h4>📊 나의 CODE 분포</h4>
+          <div id="score-bars"></div>
+        </div>
+      </div>
+    </div>
+    <div class="compatible-section" style="margin-bottom:24px;">
+      <h4>🤝 나와 잘 맞는 동료 유형</h4>
+      <div class="compatible-cards" id="compatible-cards"></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-retry" onclick="retryQuiz()">🔄 다시 테스트</button>
+      <a class="btn-home" href="index.html">🏠 홈으로</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   12문항 데이터
+   각 선택지는 CODE 점수에 반영됨
+   codes: { CODE명: 점수 }
+══════════════════════════════════════════ */
+const QUESTIONS = [
+  {
+    text: "업무 마감이 다가오는데 동료가 실수를 저질렀다. 나의 반응은?",
+    options: [
+      { text: "일단 같이 해결하고, 나중에 조용히 피드백을 준다", codes: { 리더십: 2, 상호존중: 1 } },
+      { text: "\"내가 맡을게요\" 하고 책임지고 마무리한다", codes: { 책임의식: 3 } },
+      { text: "실수 원인을 함께 분석해서 다음엔 안 생기게 한다", codes: { 문제해결: 2, 동기부여: 1 } },
+      { text: "\"괜찮아, 누구나 실수해\" 하고 격려해준다", codes: { 감사긍정: 2, 조직활력: 1 } }
+    ]
+  },
+  {
+    text: "회의 중 내 의견이 묵살당했다. 어떻게 하나?",
+    options: [
+      { text: "한 번 더 논리적으로 설명을 시도한다", codes: { 소통활성화: 3 } },
+      { text: "일단 넘어가고, 나중에 1:1로 이야기한다", codes: { 상호존중: 2, 소통활성화: 1 } },
+      { text: "데이터나 근거를 찾아 다음 회의에 다시 꺼낸다", codes: { 문제해결: 2, 책임의식: 1 } },
+      { text: "다른 사람 의견도 들어보며 내가 놓친 게 없는지 생각한다", codes: { 소통활성화: 1, 동기부여: 2 } }
+    ]
+  },
+  {
+    text: "신입 직원이 같은 실수를 반복하고 있다. 나라면?",
+    options: [
+      { text: "체크리스트를 만들어서 함께 확인한다", codes: { 리더십: 2, 문제해결: 1 } },
+      { text: "실수할 만한 상황을 미리 알려주고 예방한다", codes: { 안전문화: 2, 책임의식: 1 } },
+      { text: "\"처음엔 다 그래\" 하며 격려하고 기다린다", codes: { 동기부여: 2, 감사긍정: 1 } },
+      { text: "내가 직접 같이 해보면서 방법을 보여준다", codes: { 리더십: 3 } }
+    ]
+  },
+  {
+    text: "오늘 유독 업무가 잘 풀린다. 이 기분을 어떻게 활용하나?",
+    options: [
+      { text: "밀린 어려운 업무도 도전해본다", codes: { 동기부여: 3 } },
+      { text: "동료에게도 활기차게 인사하고 긍정 에너지를 나눈다", codes: { 조직활력: 2, 감사긍정: 1 } },
+      { text: "평소 개선하고 싶었던 업무 방식을 시도해본다", codes: { 문제해결: 2, 동기부여: 1 } },
+      { text: "도움이 필요한 동료를 먼저 찾아본다", codes: { 조직활력: 3 } }
+    ]
+  },
+  {
+    text: "현장 점검 중 사소해 보이는 위험 요소를 발견했다. 어떻게 하나?",
+    options: [
+      { text: "즉시 담당자에게 알리고 조치를 요청한다", codes: { 안전문화: 3 } },
+      { text: "일단 내가 직접 조치하고, 나중에 보고한다", codes: { 책임의식: 2, 안전문화: 1 } },
+      { text: "동료들에게도 공유해서 모두가 알게 한다", codes: { 안전문화: 2, 소통활성화: 1 } },
+      { text: "재발 방지를 위해 근본 원인을 분석한다", codes: { 문제해결: 2, 안전문화: 1 } }
+    ]
+  },
+  {
+    text: "팀 내 분위기가 최근 들어 어수선하다. 나의 역할은?",
+    options: [
+      { text: "가볍게 팀 점심을 제안하며 분위기를 환기시킨다", codes: { 조직활력: 3 } },
+      { text: "팀장에게 상황을 솔직하게 말하고 개선을 건의한다", codes: { 소통활성화: 2, 리더십: 1 } },
+      { text: "개인적으로 힘들어 보이는 동료에게 먼저 말을 건다", codes: { 상호존중: 2, 감사긍정: 1 } },
+      { text: "원인이 뭔지 파악하고 해결 방안을 생각해본다", codes: { 문제해결: 2, 리더십: 1 } }
+    ]
+  },
+  {
+    text: "내가 크게 기여한 프로젝트가 성공했다. 그런데 인정을 못 받았다면?",
+    options: [
+      { text: "나 스스로 성장한 것으로 만족한다", codes: { 동기부여: 3 } },
+      { text: "다음엔 내 기여를 더 잘 알릴 방법을 생각한다", codes: { 소통활성화: 2, 문제해결: 1 } },
+      { text: "나를 알아주는 동료가 있다는 것만으로도 충분하다", codes: { 감사긍정: 2, 상호존중: 1 } },
+      { text: "팀 전체의 성공이 중요하므로 크게 신경 쓰지 않는다", codes: { 책임의식: 2, 조직활력: 1 } }
+    ]
+  },
+  {
+    text: "업무 중 누가 봐도 이상한 관행을 발견했다. 나라면?",
+    options: [
+      { text: "\"원래 이렇게 해왔는데\" 라는 말 대신 왜 그런지 따져본다", codes: { 문제해결: 3 } },
+      { text: "상급자에게 문제를 솔직하게 제기한다", codes: { 청렴윤리: 2, 소통활성화: 1 } },
+      { text: "관련 규정을 찾아보고 원칙대로 처리한다", codes: { 청렴윤리: 3 } },
+      { text: "동료들과 함께 개선 방안을 논의한다", codes: { 문제해결: 1, 소통활성화: 2 } }
+    ]
+  },
+  {
+    text: "나와 다른 방식으로 일하는 동료가 있다. 어떻게 대하나?",
+    options: [
+      { text: "서로 다른 방식을 인정하고 장단점을 나눠본다", codes: { 상호존중: 3 } },
+      { text: "왜 그 방식을 선택했는지 먼저 물어본다", codes: { 소통활성화: 2, 상호존중: 1 } },
+      { text: "두 방식 중 더 효율적인 걸 함께 찾아본다", codes: { 문제해결: 2, 상호존중: 1 } },
+      { text: "서로의 방식을 합쳐서 더 좋은 방법을 만들어본다", codes: { 리더십: 1, 문제해결: 2 } }
+    ]
+  },
+  {
+    text: "팀원이 내가 보기엔 잘못된 방향으로 가고 있다. 나의 반응은?",
+    options: [
+      { text: "\"혹시 이 부분은 어떻게 생각해?\" 하고 질문으로 유도한다", codes: { 리더십: 2, 소통활성화: 1 } },
+      { text: "구체적인 데이터와 근거로 다른 방향을 제안한다", codes: { 문제해결: 2, 책임의식: 1 } },
+      { text: "직접적으로 솔직하게 내 의견을 말한다", codes: { 소통활성화: 2, 청렴윤리: 1 } },
+      { text: "일단 해보게 두고, 결과를 보며 같이 배운다", codes: { 동기부여: 1, 상호존중: 2 } }
+    ]
+  },
+  {
+    text: "오늘 하루 특히 고마운 동료가 있다. 어떻게 표현하나?",
+    options: [
+      { text: "퇴근 전에 \"오늘 정말 고마웠어요\" 하고 직접 말한다", codes: { 감사긍정: 3 } },
+      { text: "메신저나 메모로 구체적인 감사 이유와 함께 전한다", codes: { 감사긍정: 2, 소통활성화: 1 } },
+      { text: "다음에 내가 도움이 되는 것으로 보답한다", codes: { 조직활력: 2, 감사긍정: 1 } },
+      { text: "팀 전체 앞에서 칭찬해준다", codes: { 감사긍정: 2, 리더십: 1 } }
+    ]
+  },
+  {
+    text: "애매한 상황에서 나의 이익과 원칙이 충돌한다면?",
+    options: [
+      { text: "무조건 원칙대로 한다. 나중에 후회가 없다", codes: { 청렴윤리: 3 } },
+      { text: "상급자나 규정에 확인하고 결정한다", codes: { 청렴윤리: 2, 책임의식: 1 } },
+      { text: "내가 결정한 것이 공개돼도 부끄럽지 않은지 생각한다", codes: { 청렴윤리: 2, 상호존중: 1 } },
+      { text: "비슷한 사례를 찾아보고 기준을 세운다", codes: { 문제해결: 1, 청렴윤리: 2 } }
+    ]
+  }
+];
+
+/* ══════════════════════════════════════════
+   10가지 직원 유형 정의
+══════════════════════════════════════════ */
+const TYPES = {
+  책임의식: {
+    emoji: "🛡️",
+    name: "끝까지 책임지는 완수형",
+    code: "책임의식",
+    slogan: "내가 하는 업무로 우리 회사의 미래가 바뀝니다.",
+    desc: "맡은 일은 반드시 끝내고 마는 당신! '어차피 티 안 나겠지'라는 생각은 사전에 없으며, 작은 업무 하나도 끝까지 책임지는 자세가 팀 전체의 신뢰를 만들어냅니다. 동료들이 가장 믿고 의지하는 타입이에요.",
+    strengths: ["완수력", "신뢰감", "꼼꼼함", "책임감", "마무리 능력"],
+    compatible: ["리더십", "문제해결"]
+  },
+  동기부여: {
+    emoji: "🚀",
+    name: "어제보다 나은 오늘을 사는 성장형",
+    code: "동기부여",
+    slogan: "오늘의 나는 어제보다 조금 더 성장해 나갑니다.",
+    desc: "실패해도 배움으로 바꾸는 긍정적 성장 마인드셋의 소유자! 새로운 도전을 두려워하지 않고, 주변 동료들에게도 '할 수 있다'는 에너지를 불어넣는 팀의 활력소입니다.",
+    strengths: ["성장 마인드셋", "도전 정신", "긍정 에너지", "자기계발", "회복 탄력성"],
+    compatible: ["조직활력", "감사긍정"]
+  },
+  리더십: {
+    emoji: "🧭",
+    name: "함께 방향을 찾는 나침반형",
+    code: "리더십",
+    slogan: "함께 고민하고 변화를 이끄는 당신이 진정한 리더입니다.",
+    desc: "직급과 상관없이 팀의 방향을 잡아주는 사람! 혼자 결정하기보다 함께 고민하고 구성원 각자의 강점을 끌어내줍니다. 당신이 있으면 팀이 한 방향으로 움직여요.",
+    strengths: ["방향 제시", "팀 통합", "코칭", "솔선수범", "공감 능력"],
+    compatible: ["소통활성화", "상호존중"]
+  },
+  문제해결: {
+    emoji: "🔍",
+    name: "원인을 파헤치는 탐정형",
+    code: "문제해결",
+    slogan: "우리는 새로운 시도를 통해 해답을 찾아 갑니다.",
+    desc: "'원래 이렇게 해왔으니까'라는 말을 가장 싫어하는 타입! 문제가 생기면 근본 원인을 파악하고, 데이터와 근거를 기반으로 새로운 해결책을 찾아냅니다. 조직의 변화를 이끄는 혁신가예요.",
+    strengths: ["논리적 사고", "창의성", "분석력", "개선 의지", "실행력"],
+    compatible: ["책임의식", "동기부여"]
+  },
+  상호존중: {
+    emoji: "🌱",
+    name: "다름을 인정하는 포용형",
+    code: "상호존중",
+    slogan: "우리는 서로의 다름을 존중하고 이해합니다.",
+    desc: "나와 다른 의견을 '틀림'이 아닌 '다름'으로 받아들이는 열린 마음의 소유자! 어떤 동료와도 심리적 안전지대를 만들어내며, 팀의 다양성을 강점으로 바꾸는 존재예요.",
+    strengths: ["포용력", "경청", "공감", "유연성", "배려심"],
+    compatible: ["감사긍정", "소통활성화"]
+  },
+  감사긍정: {
+    emoji: "🌟",
+    name: "칭찬이 넘치는 햇살형",
+    code: "감사·긍정",
+    slogan: "우리는 칭찬과 감사의 표현 속에서 더욱 성장합니다.",
+    desc: "팀의 분위기를 밝게 만드는 긍정 에너지 발전소! 동료의 작은 노력도 놓치지 않고 칭찬하며, 감사 표현을 아끼지 않아 주변 사람들이 더 잘하고 싶어지게 만드는 마법을 가졌어요.",
+    strengths: ["긍정성", "칭찬 능력", "감사 표현", "분위기 메이킹", "정서적 지지"],
+    compatible: ["조직활력", "상호존중"]
+  },
+  소통활성화: {
+    emoji: "💬",
+    name: "편견 없이 듣는 소통왕형",
+    code: "소통활성화",
+    slogan: "우리는 편견 없이 듣고, 두려움 없이 말합니다.",
+    desc: "말하기도 잘하지만 듣기는 더 잘하는 진정한 소통의 달인! '어차피 안 될 것 같아서'라는 생각 대신 먼저 의견을 내고, 다른 생각도 거리낌 없이 표현할 수 있는 심리적 안전지대를 만들어냅니다.",
+    strengths: ["경청", "표현력", "설득력", "중재 능력", "명확한 전달"],
+    compatible: ["리더십", "조직활력"]
+  },
+  조직활력: {
+    emoji: "⚡",
+    name: "팀의 활력을 만드는 에너자이저형",
+    code: "조직활력",
+    slogan: "우리는 서로를 배려하며 즐거운 업무분위기를 만듭니다.",
+    desc: "당신이 출근하면 팀의 에너지가 달라집니다! 눈 맞추며 인사하고, 바쁜 동료에게 먼저 도움을 건네며, 즐거운 업무 분위기를 자연스럽게 만들어내는 팀의 심장 같은 존재예요.",
+    strengths: ["배려심", "친화력", "분위기 조성", "협력", "유머 감각"],
+    compatible: ["감사긍정", "소통활성화"]
+  },
+  청렴윤리: {
+    emoji: "⚖️",
+    name: "원칙 앞에 흔들리지 않는 철벽형",
+    code: "청렴윤리",
+    slogan: "우리는 작은 유혹 앞에서도 언제나 원칙을 선택합니다.",
+    desc: "애매한 상황에서도 원칙을 지키는 당신은 조직의 든든한 버팀목! 이해 충돌 상황에서 명확하게 선을 긋고, '공개돼도 부끄럽지 않은 결정'을 기준으로 삼는 신뢰의 아이콘이에요.",
+    strengths: ["원칙주의", "판단력", "공정성", "투명성", "용기"],
+    compatible: ["책임의식", "상호존중"]
+  },
+  안전문화: {
+    emoji: "🦺",
+    name: "동료의 위험을 먼저 보는 안전지킴이형",
+    code: "안전문화",
+    slogan: "우리는 동료의 작은 위험도 놓치지 않고 먼저 살핍니다.",
+    desc: "사소한 위험 요소도 절대 그냥 지나치지 않는 안전의 수호자! 현장에서 잠재적 위험을 먼저 발견하고, 동료들과 즉시 공유하며 모두가 안전하게 일할 수 있는 환경을 만드는 사람이에요.",
+    strengths: ["관찰력", "예방 의식", "책임감", "신속한 대응", "동료 배려"],
+    compatible: ["책임의식", "소통활성화"]
+  }
+};
+
+/* ══════════════════════════════════════════
+   퀴즈 로직
+══════════════════════════════════════════ */
+let currentQ = 0;
+let scores = {
+  책임의식: 0, 동기부여: 0, 리더십: 0, 문제해결: 0, 상호존중: 0,
+  감사긍정: 0, 소통활성화: 0, 조직활력: 0, 청렴윤리: 0, 안전문화: 0
+};
+
+function startQuiz() {
+  currentQ = 0;
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  const pct = Math.round((currentQ / total) * 100);
+
+  document.getElementById('progress-text').textContent = `${currentQ + 1} / ${total}`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-num').textContent = `Q${String(currentQ + 1).padStart(2, '0')}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt.text;
+    btn.onclick = () => selectOption(opt.codes, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(codesToAdd, btn) {
+  // 시각적 피드백
+  document.querySelectorAll('.opt-btn').forEach(b => b.style.pointerEvents = 'none');
+  btn.classList.add('selected');
+
+  // 점수 누적
+  Object.entries(codesToAdd).forEach(([code, score]) => {
+    scores[code] = (scores[code] || 0) + score;
+  });
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  // 최고 점수 유형 찾기
+  const topCode = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const type = TYPES[topCode];
+
+  document.getElementById('res-emoji').textContent = type.emoji;
+  document.getElementById('res-name').textContent = type.name;
+  document.getElementById('res-code').textContent = type.code;
+  document.getElementById('res-slogan').textContent = '"' + type.slogan + '"';
+  document.getElementById('res-desc').textContent = type.desc;
+
+  // 강점 태그
+  document.getElementById('res-strengths').innerHTML =
+    type.strengths.map(s => `<span class="strength-tag">${s}</span>`).join('');
+
+  // 점수 바 (상위 5개)
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxScore = sorted[0][1] || 1;
+  document.getElementById('score-bars').innerHTML = sorted.map(([code, score]) => `
+    <div class="score-row">
+      <div class="score-label">${code}</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-fill" style="width:${Math.round((score/maxScore)*100)}%"></div>
+      </div>
+      <div class="score-val">${score}점</div>
+    </div>`).join('');
+
+  // 궁합 카드
+  document.getElementById('compatible-cards').innerHTML =
+    type.compatible.map(code => {
+      const t = TYPES[code];
+      return `<div class="compat-card">
+        <span class="compat-emoji">${t.emoji}</span>
+        <div class="compat-name">${t.name.split(' ').pop()}</div>
+        <div class="compat-label">${t.code}</div>
+      </div>`;
+    }).join('');
+}
+
+function retryQuiz() {
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
