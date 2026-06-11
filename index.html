@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KEPCO CODE 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:       #0B2559;
+      --navy-mid:   #1A3A7A;
+      --navy-light: #2B52A3;
+      --accent:     #E8A400;
+      --white:      #FFFFFF;
+      --gray-100:   #F4F6FA;
+      --gray-200:   #E2E8F0;
+      --gray-500:   #64748B;
+      --gray-800:   #1E293B;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans KR', sans-serif; background: var(--gray-100); color: var(--gray-800); }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .header-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 56px;
+    }
+    .logo {
+      color: var(--white); font-weight: 900; font-size: 1rem;
+      text-decoration: none; display: flex; align-items: center; gap: 8px;
+    }
+    .logo .badge {
+      background: var(--accent); color: var(--navy);
+      font-size: 0.65rem; font-weight: 900;
+      padding: 2px 7px; border-radius: 20px;
+    }
+    .header-sub {
+      color: rgba(255,255,255,0.55); font-size: 0.75rem;
+    }
+
+    /* ── TAB BAR ── */
+    .tab-bar {
+      display: flex; overflow-x: auto; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.6);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      padding: 12px 24px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .tab-btn:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── COMMON ── */
+    .section { padding: 56px 5%; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--navy-light); text-transform: uppercase; margin-bottom: 6px; }
+    .section-title { font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 900; color: var(--navy); }
+    .section-desc  { font-size: 0.9rem; color: var(--gray-500); margin-top: 8px; }
+    .divider { width: 36px; height: 4px; background: var(--accent); border-radius: 2px; margin: 10px 0 32px; }
+
+    /* ── HERO (탭1) ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--navy-light) 100%);
+      color: var(--white); padding: 72px 5% 64px; position: relative; overflow: hidden;
+    }
+    .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:360px; height:360px; border-radius:50%; background:rgba(232,164,0,0.07); pointer-events:none; }
+    .hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+    .hero-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.72rem; font-weight:900; letter-spacing:0.1em; padding:4px 14px; border-radius:20px; margin-bottom:18px; }
+    .hero h1 { font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight:900; line-height:1.25; margin-bottom:14px; }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub { font-size:0.98rem; color:rgba(255,255,255,0.72); max-width:500px; line-height:1.8; }
+    .hero-badge { margin-top:28px; display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:40px; padding:9px 20px; font-size:0.85rem; font-weight:500; }
+    .hero-badge .dot { width:7px; height:7px; background:var(--accent); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+
+    /* 추진배경 카드 */
+    .bg-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+    .bg-card { background:var(--white); border-radius:14px; padding:24px; box-shadow:0 2px 16px rgba(11,37,89,0.07); border-left:4px solid var(--accent); }
+    .bg-card h4 { font-size:0.8rem; font-weight:700; color:var(--navy-light); letter-spacing:0.08em; margin-bottom:8px; }
+    .bg-card p { font-size:0.88rem; color:var(--gray-800); line-height:1.7; }
+
+    /* 전체 CODE 그리드 */
+    .codes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:14px; }
+    .mini-code { background:var(--white); border:2px solid var(--gray-200); border-radius:12px; padding:18px 15px; transition:all 0.2s; }
+    .mini-code:hover { border-color:var(--navy-light); background:var(--gray-100); transform:translateY(-2px); }
+    .mini-code.active { border-color:var(--accent); background:#FFFBF0; }
+    .mini-num { font-size:0.65rem; font-weight:700; color:var(--navy-light); letter-spacing:0.1em; margin-bottom:5px; }
+    .mini-name { font-size:0.95rem; font-weight:700; color:var(--navy); margin-bottom:4px; }
+    .mini-slogan { font-size:0.72rem; color:var(--gray-500); line-height:1.5; }
+    .active-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.62rem; font-weight:900; padding:2px 7px; border-radius:10px; margin-bottom:5px; }
+
+    /* 연간 일정 테이블 */
+    .sched-wrap { background:var(--white); border-radius:16px; overflow:hidden; box-shadow:0 2px 16px rgba(11,37,89,0.07); }
+    .schedule-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+    .schedule-table thead tr { background:var(--navy); }
+    .schedule-table th { padding:14px 20px; text-align:left; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; color:var(--accent); }
+    .schedule-table td { padding:14px 20px; border-bottom:1px solid var(--gray-200); color:var(--gray-800); }
+    .schedule-table tr:last-child td { border-bottom:none; }
+    .schedule-table tr.current-row td { background:#FFFBF0; }
+    .sched-month { font-weight:700; color:var(--navy); white-space:nowrap; }
+    .code-pill { display:inline-block; border-radius:20px; padding:3px 11px; font-size:0.75rem; font-weight:700; margin:2px 2px; }
+    .pill-now    { background:var(--accent); color:var(--navy); }
+    .pill-green  { background:#DCFCE7; color:#166534; }
+    .pill-blue   { background:#DBEAFE; color:#1e40af; }
+    .pill-teal   { background:#CCFBF1; color:#115e59; }
+    .pill-red    { background:#FEE2E2; color:#991b1b; }
+    .pill-orange { background:#FEF3C7; color:#92400e; }
+    .pill-indigo { background:#E0E7FF; color:#3730a3; }
+    .pill-brown  { background:#FEF9C3; color:#713f12; }
+    .pill-gray   { background:#F1F5F9; color:#475569; }
+    .pill-purple { background:#F3E8FF; color:#6b21a8; }
+    .pill-teal2  { background:#CFFAFE; color:#155e75; }
+
+    /* ── 탭2: 이달의 CODE ── */
+    #page-this-month { background: var(--gray-100); }
+    .code-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; }
+    .code-card { background:var(--white); border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(11,37,89,0.08); transition:transform 0.25s,box-shadow 0.25s; }
+    .code-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(11,37,89,0.14); }
+    .code-card-header { padding:26px 26px 18px; background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%); color:var(--white); }
+    .code-number { font-size:0.68rem; font-weight:700; letter-spacing:0.14em; color:var(--accent); margin-bottom:7px; }
+    .code-name   { font-size:1.45rem; font-weight:900; margin-bottom:9px; }
+    .code-slogan { font-size:0.83rem; color:rgba(255,255,255,0.72); line-height:1.6; white-space:pre-line; }
+    .code-card-body { padding:22px 26px 26px; }
+    .code-card-body h4 { font-size:0.75rem; font-weight:700; letter-spacing:0.08em; color:var(--navy-light); margin-bottom:12px; }
+    .guide-list { list-style:none; }
+    .guide-list li { display:flex; gap:9px; font-size:0.87rem; color:var(--gray-800); padding:8px 0; border-bottom:1px solid var(--gray-200); line-height:1.55; }
+    .guide-list li:last-child { border-bottom:none; }
+    .guide-list li::before { content:'→'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+
+    /* MBTI 배너 */
+    .mbti-banner {
+      background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+      border-radius:20px; padding:36px 32px;
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:20px;
+      box-shadow:0 4px 24px rgba(11,37,89,0.15);
+    }
+    .mbti-banner h3 { font-size:clamp(1.1rem,2.5vw,1.5rem); font-weight:900; color:var(--white); margin-bottom:6px; }
+    .mbti-banner p  { font-size:0.85rem; color:rgba(255,255,255,0.7); }
+    .mbti-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.68rem; font-weight:900; letter-spacing:0.1em; padding:3px 12px; border-radius:20px; margin-bottom:10px; }
+    .btn-mbti {
+      display:inline-block; background:var(--accent); color:var(--navy);
+      font-size:0.9rem; font-weight:900; padding:13px 28px; border-radius:50px;
+      text-decoration:none; white-space:nowrap;
+      box-shadow:0 4px 16px rgba(232,164,0,0.35);
+      transition:transform 0.2s,box-shadow 0.2s;
+    }
+    .btn-mbti:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(232,164,0,0.4); }
+
+    /* ── 탭3: 웹소설 연재 ── */
+    #page-archive { background: var(--white); }
+
+    .novel-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #2d1b69 100%);
+      padding: 52px 5% 44px; text-align: center;
+    }
+    .novel-hero-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.68rem; font-weight:900; letter-spacing:0.1em; padding:4px 14px; border-radius:20px; margin-bottom:14px; }
+    .novel-hero h2 { font-size:clamp(1.5rem,4vw,2.4rem); font-weight:900; color:var(--white); margin-bottom:8px; line-height:1.25; }
+    .novel-hero h2 span { color:var(--accent); }
+    .novel-hero p { font-size:0.88rem; color:rgba(255,255,255,0.6); }
+
+    .novel-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+    .novel-item {
+      background: var(--white); border: 2px solid var(--gray-200);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .novel-item:hover { border-color: var(--navy-light); box-shadow: 0 4px 20px rgba(11,37,89,0.08); }
+    .novel-item.open { border-color: var(--navy); }
+
+    .novel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; cursor: pointer; user-select: none; gap: 12px;
+    }
+    .novel-header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+    .novel-ep {
+      flex-shrink: 0; background: var(--navy); color: var(--white);
+      font-size: 0.7rem; font-weight: 900; padding: 4px 10px;
+      border-radius: 8px; letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .novel-item.open .novel-ep { background: var(--accent); color: var(--navy); }
+    .novel-title { font-size: 0.97rem; font-weight: 700; color: var(--navy); line-height: 1.4; }
+    .novel-meta  { font-size: 0.75rem; color: var(--gray-500); margin-top: 3px; }
+    .novel-arrow {
+      flex-shrink: 0; font-size: 0.75rem; color: var(--gray-500);
+      transition: transform 0.3s;
+    }
+    .novel-item.open .novel-arrow { transform: rotate(180deg); color: var(--navy); }
+
+    .novel-body {
+      display: none; padding: 0 22px 24px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .novel-item.open .novel-body { display: block; }
+
+    /* 이미지 슬라이더 */
+    .novel-images { margin-top: 20px; }
+    .novel-img-scroll {
+      display: flex; gap: 10px; overflow-x: auto;
+      padding-bottom: 8px; scrollbar-width: thin;
+    }
+    .novel-img-scroll::-webkit-scrollbar { height: 4px; }
+    .novel-img-scroll::-webkit-scrollbar-track { background: var(--gray-200); border-radius: 2px; }
+    .novel-img-scroll::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 2px; }
+    .novel-img-item {
+      flex-shrink: 0; width: 260px; border-radius: 10px; overflow: hidden;
+      cursor: pointer; transition: transform 0.2s;
+    }
+    .novel-img-item:hover { transform: scale(1.02); }
+    .novel-img-item img { width: 100%; display: block; border-radius: 10px; }
+    .novel-img-placeholder {
+      width: 260px; aspect-ratio: 3/4; background: var(--gray-100);
+      border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; color: var(--gray-500); font-size: 2rem;
+      border: 2px dashed var(--gray-200);
+    }
+    .novel-img-count { font-size: 0.75rem; color: var(--gray-500); margin-top: 8px; }
+
+    .novel-empty { text-align:center; padding:72px 20px; color:var(--gray-500); }
+    .novel-empty .novel-empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .novel-empty p { font-size: 0.9rem; line-height: 1.8; }
+
+    /* 본문 텍스트 */
+    .novel-text { padding-top: 20px; }
+    .novel-text p {
+      font-size: 0.95rem; line-height: 2; color: var(--gray-800);
+      margin-bottom: 12px; word-break: keep-all;
+    }
+    .novel-lesson {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: var(--white); border-radius: 12px;
+      padding: 18px 20px; margin: 20px 0;
+      font-size: 0.92rem; font-weight: 600; line-height: 1.8;
+    }
+
+    /* ── 탭4: KEPCO CODE MV ── */
+    #page-mv { background: var(--gray-800); min-height: 60vh; }
+    #page-mv .section-label { color: rgba(255,255,255,0.5); }
+    #page-mv .section-title { color: var(--white); }
+    #page-mv .section-desc  { color: rgba(255,255,255,0.55); }
+
+    .mv-hero {
+      background: linear-gradient(135deg, #000 0%, #0B2559 60%, #1A3A7A 100%);
+      padding: 56px 5% 48px; text-align: center; position: relative; overflow: hidden;
+    }
+    .mv-hero::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:500px; border-radius:50%; background:radial-gradient(circle, rgba(232,164,0,0.08) 0%, transparent 70%); pointer-events:none; }
+    .mv-hero-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.68rem; font-weight:900; letter-spacing:0.12em; padding:4px 14px; border-radius:20px; margin-bottom:16px; }
+    .mv-hero h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:900; color:var(--white); margin-bottom:10px; line-height:1.2; }
+    .mv-hero h2 span { color:var(--accent); }
+    .mv-hero p { font-size:0.9rem; color:rgba(255,255,255,0.6); }
+
+    /* 메인 플레이어 */
+    .mv-main-player {
+      background: var(--gray-800); padding: 40px 5%;
+    }
+    .mv-main-inner { max-width: 860px; margin: 0 auto; }
+    .mv-embed-wrap {
+      position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+      border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      background: #000;
+    }
+    .mv-embed-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:16px; }
+    .mv-main-info { margin-top: 20px; }
+    .mv-main-title { font-size:1.2rem; font-weight:900; color:var(--white); margin-bottom:6px; }
+    .mv-main-desc  { font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.7; }
+    .mv-main-tags  { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .mv-tag { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); font-size:0.75rem; padding:4px 12px; border-radius:20px; }
+
+    /* MV 목록 그리드 */
+    .mv-list-section { background: #111827; padding: 40px 5%; }
+    .mv-list-inner { max-width: 1000px; margin: 0 auto; }
+    .mv-list-title { font-size:0.8rem; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:20px; }
+    .mv-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+    .mv-card {
+      background: #1F2937; border-radius:12px; overflow:hidden; cursor:pointer;
+      border: 2px solid transparent; transition: all 0.2s;
+    }
+    .mv-card:hover { border-color: var(--accent); transform:translateY(-2px); }
+    .mv-card.playing { border-color: var(--accent); background: #1A3A7A; }
+    .mv-thumb-wrap { position:relative; padding-bottom:56.25%; background:#000; overflow:hidden; }
+    .mv-thumb { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0.8; }
+    .mv-thumb-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1A3A7A,#0B2559); }
+    .mv-play-icon { width:44px; height:44px; background:rgba(232,164,0,0.9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); transition:transform 0.2s; }
+    .mv-card:hover .mv-play-icon { transform:translate(-50%,-50%) scale(1.1); }
+    .mv-card-info { padding:14px; }
+    .mv-card-title { font-size:0.88rem; font-weight:700; color:var(--white); margin-bottom:4px; line-height:1.4; }
+    .mv-card-sub   { font-size:0.72rem; color:rgba(255,255,255,0.45); }
+    .mv-card.playing .mv-card-title { color:var(--accent); }
+
+    .mv-empty { text-align:center; padding:60px 20px; color:rgba(255,255,255,0.3); font-size:0.9rem; }
+
+    /* LIGHTBOX */
+    .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:20px; }
+    .lightbox.open { display:flex; }
+    .lightbox-img { max-width:90vw; max-height:88vh; border-radius:8px; object-fit:contain; }
+    .lightbox-close { position:absolute; top:18px; right:22px; color:var(--white); font-size:1.8rem; cursor:pointer; background:none; border:none; font-family:inherit; opacity:0.8; }
+    .lightbox-close:hover { opacity:1; }
+
+    /* FOOTER */
+    footer { background:var(--gray-800); color:rgba(255,255,255,0.45); text-align:center; padding:28px 5%; font-size:0.8rem; line-height:1.8; }
+    footer strong { color:rgba(255,255,255,0.75); }
+
+    @media (max-width:480px) {
+      .section { padding:40px 4%; }
+      .codes-grid { grid-template-columns:repeat(2,1fr); }
+      .mbti-banner { padding:24px 20px; }
+      .schedule-table th, .schedule-table td { padding:10px 12px; font-size:0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER + TABS ── -->
+<header class="site-header">
+  <div class="header-top">
+    <a class="logo" href="#">KEPCO CODE <span class="badge">'26</span></a>
+    <span class="header-sub">남서울본부 주니어보드 7기</span>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('kepco2026', this)">KEPCO CODE 2026</button>
+    <button class="tab-btn" onclick="switchTab('this-month', this)">이달의 KEPCO CODE</button>
+    <button class="tab-btn" onclick="switchTab('archive', this)">KEPCO CODE 웹소설</button>
+    <button class="tab-btn" onclick="switchTab('mv', this)">🎬 KEPCO CODE MV</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     탭 1: KEPCO CODE 2026
+══════════════════════════════════════ -->
+<div class="page active" id="page-kepco2026">
+
+  <!-- 히어로 -->
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="hero-tag">노사합동 기업문화 개선과제</span>
+      <h1>약속에서 <span>행동</span>으로,<br>한 단계 도약하는<br>KEPCO CODE</h1>
+      <p class="hero-sub">일상 업무 속에서 즉각적으로 실천할 수 있는 기업문화 가이드라인. 매월 2개의 CODE를 선정하여 함께 실천해 나갑니다.</p>
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span id="hero-badge-text"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 추진배경 -->
+  <div class="section" style="background:var(--white);">
+    <div class="section-inner">
+      <p class="section-label">Background</p>
+      <h2 class="section-title">추진 배경</h2>
+      <div class="divider"></div>
+      <div class="bg-cards">
+        <div class="bg-card">
+          <h4>📌 추진 목적</h4>
+          <p>당면한 위기 극복의 구심점이자 지속 성장의 원동력 마련을 위해 강력한 조직문화 가치관의 내재화를 통한 구성원 결집이 필요합니다.</p>
+        </div>
+        <div class="bg-card">
+          <h4>🎯 실천 방향</h4>
+          <p>직원 모두가 자발적으로 실천하는 행동원칙을 정립함으로써 바람직한 기업문화를 구축하고, 지속가능한 조직의 경쟁력을 강화합니다.</p>
+        </div>
+        <div class="bg-card">
+          <h4>📅 2026년 운영</h4>
+          <p>'23~'25년이 "무엇을 바꿀 것인가"를 정의한 해였다면, '26년은 "어떻게 일상 속에 살아 숨쉬게 할 것인가"를 보여주는 해입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 전체 CODE -->
+  <div class="section" style="background:var(--gray-100);">
+    <div class="section-inner">
+      <p class="section-label">KEPCO CODE 10</p>
+      <h2 class="section-title">전체 실천과제</h2>
+      <div class="divider"></div>
+      <div class="codes-grid" id="all-codes-container"></div>
+    </div>
+  </div>
+
+  <!-- 연간 일정 -->
+  <div class="section" style="background:var(--white);">
+    <div class="section-inner">
+      <p class="section-label">2026 Schedule</p>
+      <h2 class="section-title">연간 실천 일정</h2>
+      <div class="divider"></div>
+      <div class="sched-wrap">
+        <table class="schedule-table">
+          <thead><tr><th>월</th><th>이달의 KEPCO CODE</th><th>이달의 주제</th></tr></thead>
+          <tbody id="schedule-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     탭 2: 이달의 KEPCO CODE
+══════════════════════════════════════ -->
+<div class="page" id="page-this-month">
+
+  <div class="section">
+    <div class="section-inner">
+      <p class="section-label">This Month</p>
+      <h2 class="section-title">이달의 KEPCO CODE</h2>
+      <div class="divider"></div>
+      <p class="section-desc" id="this-month-desc" style="margin-bottom:32px;"></p>
+      <div class="code-cards" id="code-cards-container"></div>
+    </div>
+  </div>
+
+  <!-- MBTI 배너 -->
+  <div class="section" style="background:var(--white); padding-top:0;">
+    <div class="section-inner">
+      <div class="mbti-banner">
+        <div>
+          <div class="mbti-tag">✨ 직원 유형 테스트</div>
+          <h3>나는 어떤 한전인일까? ⚡</h3>
+          <p>12문항으로 알아보는 나의 KEPCO 직원 캐릭터 유형!</p>
+        </div>
+        <a class="btn-mbti" href="kepco-mbti.html">테스트 하러가기 →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     탭 3: 웹소설 연재
+══════════════════════════════════════ -->
+<div class="page" id="page-archive">
+
+  <div class="novel-hero">
+    <div class="novel-hero-tag">📖 웹소설 연재</div>
+    <h2>KEPCO CODE<br><span>웹소설</span></h2>
+    <p>한전 직원들의 이야기로 풀어낸 KEPCO CODE 웹소설 연재</p>
+  </div>
+
+  <div class="section" style="background:var(--gray-100);">
+    <div class="section-inner">
+      <div class="novel-list" id="novel-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     탭 4: KEPCO CODE MV
+══════════════════════════════════════ -->
+<div class="page" id="page-mv">
+
+  <div class="mv-hero">
+    <div class="mv-hero-tag">🎬 KEPCO CODE MV</div>
+    <h2>KEPCO CODE를 <span>음악</span>으로<br>느껴보세요</h2>
+    <p>한전 기업문화 개선과제 KEPCO CODE 뮤직비디오</p>
+  </div>
+
+  <div class="mv-main-player">
+    <div class="mv-main-inner">
+      <div class="mv-embed-wrap" id="mv-player"></div>
+      <div class="mv-main-info">
+        <div class="mv-main-title" id="mv-main-title"></div>
+        <div class="mv-main-desc"  id="mv-main-desc"></div>
+        <div class="mv-main-tags"  id="mv-main-tags"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close">✕</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt=""/>
+</div>
+
+<footer>
+  <strong>KEPCO CODE</strong> — 노사합동 기업문화 개선과제<br>
+  남서울본부 주니어보드 7기 · 2026
+</footer>
+
+<script>
+/* ================================================================
+   ★★★ 매달 여기만 수정하세요! ★★★
+   ================================================================ */
+
+const CURRENT_MONTH = 6;
+
+const THIS_MONTH = {
+  label: "2026년 6월",
+  codes: [
+    {
+      number: "CODE 08",
+      name: "조직활력",
+      slogan: "우리는 서로를 배려하며\n즐거운 업무분위기를 만듭니다.",
+      guides: [
+        "출근 시 부서원과 눈 맞추며 인사 나누기",
+        "내 업무가 끝났더라도 바쁜 동료에게 먼저 도움 필요한지 물어보기",
+        "부서 간 이기주의를 내세우기보다 타 부서 협업 요청에 긍정적으로 협조하기",
+        "동료의 취미·관심사를 나누는 짧은 대화로 유대감 쌓기"
+      ]
+    },
+    {
+      number: "CODE 07",
+      name: "소통활성화",
+      slogan: "우리는 편견 없이 듣고,\n두려움 없이 말합니다.",
+      guides: [
+        "회의 시 상대방의 말을 끝까지 경청하기",
+        '"어차피 안 될 것 같아서…" 대신 우선 의견 말해보기',
+        '타인의 의견이 다를 때 "그건 아니다" 대신 다른 방식으로 부드럽게 의견 나누기',
+        "업무 진행 상황을 관련 부서·담당자와 수시로 공유하는 습관 갖기"
+      ]
+    }
+  ]
+};
+
+const SCHEDULE = [
+  { month:6,  label:"6월",  codes:["조직활력","소통활성화"], pillStyles:["pill-green","pill-blue"],   theme:"서로 배려하며 편견 없이 소통하기" },
+  { month:7,  label:"7월",  codes:["안전문화","리더십"],     pillStyles:["pill-teal","pill-red"],    theme:"동료의 위험을 살피고, 함께 변화 이끌기" },
+  { month:8,  label:"8월",  codes:["문제해결","감사·긍정"],  pillStyles:["pill-indigo","pill-orange"],theme:"새로운 시도와 감사의 표현으로 성장하기" },
+  { month:9,  label:"9월",  codes:["동기부여","청렴윤리"],   pillStyles:["pill-brown","pill-gray"],  theme:"성장하며 원칙을 지키는 한전인" },
+  { month:10, label:"10월", codes:["책임의식","상호존중"],   pillStyles:["pill-purple","pill-teal2"],theme:"책임 있는 업무와 서로에 대한 존중" }
+];
+
+const ALL_CODES = [
+  { number:"CODE 01", name:"책임의식",   slogan:"내가 하는 업무로 우리 회사의 미래가 바뀝니다." },
+  { number:"CODE 02", name:"동기부여",   slogan:"오늘의 나는 어제보다 조금 더 성장해 나갑니다." },
+  { number:"CODE 03", name:"리더십",     slogan:"함께 고민하고 변화를 이끄는 당신이 진정한 리더입니다." },
+  { number:"CODE 04", name:"문제해결",   slogan:"우리는 새로운 시도를 통해 해답을 찾아 갑니다." },
+  { number:"CODE 05", name:"상호존중",   slogan:"우리는 서로의 다름을 존중하고 이해합니다." },
+  { number:"CODE 06", name:"감사·긍정",  slogan:"우리는 칭찬과 감사의 표현 속에서 더욱 성장합니다." },
+  { number:"CODE 07", name:"소통활성화", slogan:"우리는 편견 없이 듣고, 두려움 없이 말합니다." },
+  { number:"CODE 08", name:"조직활력",   slogan:"우리는 서로를 배려하며 즐거운 업무분위기를 만듭니다." },
+  { number:"CODE 09", name:"청렴윤리",   slogan:"우리는 작은 유혹 앞에서도 언제나 원칙을 선택합니다." },
+  { number:"CODE 10", name:"안전문화",   slogan:"우리는 동료의 작은 위험도 놓치지 않고 먼저 살핍니다." }
+];
+
+/* 카드뉴스 아카이브 데이터 — 현재 웹소설 탭으로 대체됨 */
+
+/* ================================================================
+   KEPCO CODE MV 목록
+   유튜브 URL 형식:
+   - 일반: https://www.youtube.com/watch?v=VIDEOID
+   - 단축: https://youtu.be/VIDEOID
+   둘 다 자동으로 임베드 변환됩니다
+   ================================================================ */
+const MV_LIST = [
+  // 영상이 생기면 아래 형식으로 추가하세요:
+  // {
+  //   title: "KEPCO CODE 2026 MV",
+  //   desc: "한전 기업문화 개선과제 KEPCO CODE 뮤직비디오",
+  //   url: "https://youtu.be/XXXXXXXX",
+  //   tags: ["KEPCO CODE", "2026", "조직활력"],
+  //   thumb: ""   // 썸네일 이미지 경로 (없으면 빈 문자열)
+  // }
+];
+
+/* ── MV 렌더링 ── */
+let currentMvIndex = -1;
+
+function getYoutubeId(url) {
+  const patterns = [
+    /youtu\.be\/([^?&]+)/,
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtube\.com\/embed\/([^?&]+)/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function playMv(index) {
+  const mv = MV_LIST[index];
+  const videoId = getYoutubeId(mv.url);
+  if (!videoId) return;
+
+  // 플레이어 업데이트
+  document.getElementById('mv-player').innerHTML = `
+    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>`;
+
+  // 정보 업데이트
+  document.getElementById('mv-main-title').textContent = mv.title;
+  document.getElementById('mv-main-desc').textContent = mv.desc || '';
+  document.getElementById('mv-main-tags').innerHTML =
+    (mv.tags || []).map(t => `<span class="mv-tag"># ${t}</span>`).join('');
+
+  // 카드 active 상태
+  document.querySelectorAll('.mv-card').forEach((c, i) => {
+    c.classList.toggle('playing', i === index);
+  });
+
+  currentMvIndex = index;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── MV 플레이어 초기화 ── */
+function initMvPlayer() {
+  const player = document.getElementById('mv-player');
+  if (!player) return;
+  if (!MV_LIST.length) {
+    player.innerHTML = `
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:rgba(255,255,255,0.3);">
+        <div style="font-size:3rem;">🎬</div>
+        <div style="font-size:0.9rem;">영상이 곧 업로드됩니다!</div>
+      </div>`;
+    return;
+  }
+  // MV가 있으면 첫 번째 영상 자동 로드
+  const mv = MV_LIST[0];
+  const videoId = getYoutubeId(mv.url);
+  if (!videoId) return;
+  player.innerHTML = `
+    <iframe src="https://www.youtube.com/embed/${videoId}?rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>`;
+  const titleEl = document.getElementById('mv-main-title');
+  const descEl  = document.getElementById('mv-main-desc');
+  const tagsEl  = document.getElementById('mv-main-tags');
+  if (titleEl) titleEl.textContent = mv.title;
+  if (descEl)  descEl.textContent  = mv.desc || '';
+  if (tagsEl)  tagsEl.innerHTML    = (mv.tags || []).map(t => `<span class="mv-tag"># ${t}</span>`).join('');
+}
+
+initMvPlayer();
+
+/* ================================================================
+   탭 전환
+   ================================================================ */
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + tabId).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ================================================================
+   렌더링
+   ================================================================ */
+
+// 히어로 배지
+const codeNames = THIS_MONTH.codes.map(c => c.name).join(' · ');
+document.getElementById('hero-badge-text').textContent =
+  `${THIS_MONTH.label} 현재 실천 중 — ${codeNames}`;
+
+// 이달의 desc
+document.getElementById('this-month-desc').textContent =
+  `${THIS_MONTH.label}, 함께 실천할 두 가지 CODE입니다.`;
+
+// 이달의 CODE 카드
+const cardsContainer = document.getElementById('code-cards-container');
+THIS_MONTH.codes.forEach(code => {
+  const el = document.createElement('div');
+  el.className = 'code-card';
+  el.innerHTML = `
+    <div class="code-card-header">
+      <p class="code-number">${code.number} · ${CURRENT_MONTH}월</p>
+      <h3 class="code-name">${code.name}</h3>
+      <p class="code-slogan">${code.slogan}</p>
+    </div>
+    <div class="code-card-body">
+      <h4>이렇게 실천해보세요</h4>
+      <ul class="guide-list">${code.guides.map(g=>`<li>${g}</li>`).join('')}</ul>
+    </div>`;
+  cardsContainer.appendChild(el);
+});
+
+// 전체 CODE
+const activeNames = THIS_MONTH.codes.map(c => c.name);
+const allCodesContainer = document.getElementById('all-codes-container');
+ALL_CODES.forEach(code => {
+  const isActive = activeNames.includes(code.name);
+  const el = document.createElement('div');
+  el.className = 'mini-code' + (isActive ? ' active' : '');
+  el.innerHTML = `
+    ${isActive ? `<div class="active-tag">▶ ${CURRENT_MONTH}월</div>` : ''}
+    <div class="mini-num">${code.number}</div>
+    <div class="mini-name">${code.name}</div>
+    <div class="mini-slogan">${code.slogan}</div>`;
+  allCodesContainer.appendChild(el);
+});
+
+// 연간 일정
+const scheduleBody = document.getElementById('schedule-body');
+SCHEDULE.forEach(row => {
+  const isCurrent = row.month === CURRENT_MONTH;
+  const pillsHTML = row.codes.map((name,i) =>
+    `<span class="code-pill ${isCurrent?'pill-now':row.pillStyles[i]}">${name}</span>`
+  ).join('');
+  const tr = document.createElement('tr');
+  if (isCurrent) tr.className = 'current-row';
+  tr.innerHTML = `
+    <td class="sched-month">${row.label}${isCurrent?' ●':''}</td>
+    <td>${pillsHTML}</td>
+    <td>${row.theme}</td>`;
+  scheduleBody.appendChild(tr);
+});
+
+/* ================================================================
+   웹소설 연재 데이터
+   매달 회차 추가만 하세요!
+   images 배열에 이미지 경로를 순서대로 넣으면 됩니다
+   ================================================================ */
+const NOVEL_LIST = [
+  {
+    ep: "EP.01",
+    title: "탕비실, 고독한 카페인 섭취자들의 눈치 게임",
+    code: "소통활성화",
+    date: "2026년 6월",
+    content: `월요일 오전 10시 30분. 우리 사무실 탕비실은 '고독한 카페인 섭취자들'의 성지다.
+커피 머신 앞에 서면 모두가 약속이라도 한 듯 휴대폰을 보거나, 벽면의 안전 수칙을 세상 진지하게 읽는다.
+
+나 김 대리도 예외는 아니다. 옆 팀 박 과장님이 들어오면, 나는 커피 머신 버튼을 누르는 척하며 최대한 자연스럽게 '바쁜 척'을 시전한다.
+
+'인사를 할까? 아니야, 저분 지금 되게 피곤해 보이는데 내가 말 걸면 업무 흐름 끊는 거 아냐? 아니, 그래도 예의상...?'
+
+인사 한마디 하려고 뇌 회로를 3초간 풀가동하는 이 어색함. 이게 바로 우리 회사의 '소통' 수준이다.
+
+오늘은 문득 도지고 말았다. 이상한 오기가.
+'그래, 그냥 질러보자. 어차피 믹스커피 먹으러 온 거잖아!'
+
+"과장님, 날씨가 참... 커피가 쓰네요." (아, 방금 멘트 너무 노잼이었다.)
+
+박 과장님은 휴대폰을 보다가 흠칫 놀라며 고개를 들었다.
+"어... 어, 김 대리? 그래, 월요일이라 커피가 좀 쓰긴 하네."
+
+여기서 끝났어야 했다. 근데 내 입이 내 통제를 벗어났다.
+"과장님, 혹시 지금 급한 일 아니시면... 이번 주말에 뭐 하실 거예요? 저는 넷플릭스 뚫어지게 쳐다볼 예정이라..."
+
+박 과장의 눈이 커졌다.
+"넷플릭스? 나는 이번에 '참교육' 보는데! 거기 나오는 애들 진짜 짜증 나지 않아?"
+
+...터졌다. 탕비실의 정적을 깨고, 우리 둘의 '뒷담화 아닌 뒷담화'가 시작됐다. 5분 동안 우리는 소통활성화 캠페인이고 뭐고 없이, 그냥 넷플릭스 이야기를 하며 키득거렸다.
+
+사무실로 돌아가는 길, 뒤에서 박 과장님이 웃으며 말했다.
+"김 대리, 나중에 또 커피 한잔하자. 넷플릭스 얘기도 좀 더 하고."
+
+💡 오늘의 교훈
+'소통'은 거창한 기획안이나 회의실에서 나오는 게 아니다.
+그저 탕비실에서 '오늘 커피 진짜 맛없네요'라고 말할 수 있는 '뻔뻔한 용기'에서 시작된다는 것.
+
+내일은 탕비실에서 누구를 붙잡고 무슨 시시콜콜한 이야기를 해볼까?`,
+    images: []
+  }
+];
+
+/* ── 웹소설 렌더링 ── */
+function renderNovel() {
+  const container = document.getElementById('novel-list');
+  if (!NOVEL_LIST.length) {
+    container.innerHTML = `
+      <div class="novel-empty">
+        <div class="novel-empty-icon">📖</div>
+        <p>웹소설이 곧 연재됩니다!<br>기대해 주세요 😊</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = NOVEL_LIST.map((ep, i) => `
+    <div class="novel-item" id="novel-item-${i}">
+      <div class="novel-header" onclick="toggleNovel(${i})">
+        <div class="novel-header-left">
+          <span class="novel-ep">${ep.ep}</span>
+          <div>
+            <div class="novel-title">${ep.title}</div>
+            <div class="novel-meta">${ep.date} · # ${ep.code}</div>
+          </div>
+        </div>
+        <span class="novel-arrow">▼</span>
+      </div>
+      <div class="novel-body">
+        ${ep.content
+          ? `<div class="novel-text">${ep.content.split('\n').filter(l => l.trim()).map(line =>
+              line.startsWith('💡')
+                ? `<div class="novel-lesson">${line}</div>`
+                : `<p>${line}</p>`
+            ).join('')}</div>`
+          : ''}
+        ${ep.images && ep.images.length ? `
+          <div class="novel-images">
+            <div class="novel-img-scroll">
+              ${ep.images.map((src, j) => `
+                <div class="novel-img-item" onclick="openLightbox('${src}', '${ep.title} ${j+1}컷')">
+                  <img src="${src}" alt="${ep.title} ${j+1}컷"
+                    onerror="this.parentNode.outerHTML='<div class=\\'novel-img-placeholder\\'>🖼</div>'">
+                </div>`).join('')}
+            </div>
+            <div class="novel-img-count">총 ${ep.images.length}컷 · 클릭하면 크게 볼 수 있어요</div>
+          </div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function toggleNovel(index) {
+  const item = document.getElementById(`novel-item-${index}`);
+  const isOpen = item.classList.contains('open');
+  // 다른 항목 닫기
+  document.querySelectorAll('.novel-item').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+renderNovel();
+
+/* ── 라이트박스 ── */
+function openLightbox(src, alt) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt;
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightbox-close').onclick = () =>
+  document.getElementById('lightbox').classList.remove('open');
+document.getElementById('lightbox').onclick = e => {
+  if (e.target === document.getElementById('lightbox'))
+    document.getElementById('lightbox').classList.remove('open');
+};
+</script>
+</body>
+</html>
