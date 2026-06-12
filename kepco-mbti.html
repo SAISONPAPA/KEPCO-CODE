@@ -124,6 +124,16 @@
     .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--navy-light)); border-radius: 4px; transition: width 0.6s ease; }
     .score-val { width: 30px; text-align: right; color: var(--gray-500); font-size: 0.75rem; }
 
+    /* SHARE BUTTON */
+    .btn-share {
+      width: 100%; background: var(--accent); color: var(--navy);
+      border: none; border-radius: 50px; padding: 15px 24px;
+      font-size: 0.95rem; font-weight: 900; cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 16px rgba(232,164,0,0.3);
+      transition: all 0.2s; margin-bottom: 12px;
+    }
+    .btn-share:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,164,0,0.4); }
+
     /* BUTTONS */
     .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn-retry {
@@ -226,6 +236,10 @@
     <div class="compatible-section" style="margin-bottom:24px;">
       <h4>🤝 나와 잘 맞는 동료 유형</h4>
       <div class="compatible-cards" id="compatible-cards"></div>
+    </div>
+
+    <div class="result-actions" style="margin-top:0;">
+      <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
     </div>
     <div class="result-actions">
       <button class="btn-retry" onclick="retryQuiz()">🔄 다시 테스트</button>
@@ -508,13 +522,26 @@ function selectOption(codesToAdd, btn) {
   }, 350);
 }
 
-function showResult() {
+function showResult(forcedCode) {
   document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'none';
   document.getElementById('screen-result').style.display = 'block';
   window.scrollTo(0, 0);
 
-  // 최고 점수 유형 찾기
-  const topCode = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  // 최고 점수 유형 찾기 (공유받은 결과면 forcedCode 사용)
+  let topCode;
+  if (forcedCode && TYPES[forcedCode]) {
+    topCode = forcedCode;
+  } else {
+    topCode = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+    // URL에 결과 기록 (공유용)
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('type', topCode);
+      history.replaceState(null, '', url.toString());
+    } catch (e) { /* 미리보기 환경 등에서는 무시 */ }
+  }
+
   const type = TYPES[topCode];
 
   document.getElementById('res-emoji').textContent = type.emoji;
@@ -527,17 +554,23 @@ function showResult() {
   document.getElementById('res-strengths').innerHTML =
     type.strengths.map(s => `<span class="strength-tag">${s}</span>`).join('');
 
-  // 점수 바 (상위 5개)
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const maxScore = sorted[0][1] || 1;
-  document.getElementById('score-bars').innerHTML = sorted.map(([code, score]) => `
-    <div class="score-row">
-      <div class="score-label">${code}</div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-fill" style="width:${Math.round((score/maxScore)*100)}%"></div>
-      </div>
-      <div class="score-val">${score}점</div>
-    </div>`).join('');
+  // 점수 바 — 공유받은 결과는 점수 데이터가 없으므로 섹션 숨김
+  const scoreSection = document.querySelector('.score-section');
+  if (forcedCode) {
+    scoreSection.style.display = 'none';
+  } else {
+    scoreSection.style.display = 'block';
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxScore = sorted[0][1] || 1;
+    document.getElementById('score-bars').innerHTML = sorted.map(([code, score]) => `
+      <div class="score-row">
+        <div class="score-label">${code}</div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-fill" style="width:${Math.round((score/maxScore)*100)}%"></div>
+        </div>
+        <div class="score-val">${score}점</div>
+      </div>`).join('');
+  }
 
   // 궁합 카드
   document.getElementById('compatible-cards').innerHTML =
@@ -554,8 +587,51 @@ function showResult() {
 function retryQuiz() {
   document.getElementById('screen-result').style.display = 'none';
   document.getElementById('screen-intro').style.display = 'block';
+  // URL의 공유 파라미터 제거
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('type');
+    history.replaceState(null, '', url.toString());
+  } catch (e) { /* 미리보기 환경 등에서는 무시 */ }
   window.scrollTo(0, 0);
 }
+
+/* ── 결과 공유하기 (Web Share API + URL) ── */
+function shareResult() {
+  const type = TYPES[document.getElementById('res-code').textContent.trim() === ''
+    ? null : Object.keys(TYPES).find(k => TYPES[k].code === document.getElementById('res-code').textContent.trim())];
+
+  const shareUrl = window.location.href;
+  const shareText = `나는 "${type.name}"! ${type.emoji}\n"${type.slogan}"\n\n나는 어떤 한전인일까? 너도 테스트 해봐!`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'KEPCO CODE - 나는 어떤 한전인일까?',
+      text: shareText,
+      url: shareUrl
+    }).catch(() => {}); // 사용자가 취소해도 에러 무시
+  } else {
+    // Web Share API 미지원 → 클립보드 복사
+    const fullText = `${shareText}\n${shareUrl}`;
+    navigator.clipboard.writeText(fullText).then(() => {
+      const btn = document.querySelector('.btn-share');
+      const original = btn.textContent;
+      btn.textContent = '✅ 링크가 복사되었습니다!';
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    }).catch(() => {
+      alert('공유 링크: ' + shareUrl);
+    });
+  }
+}
+
+/* ── 페이지 로드 시 공유 링크 확인 ── */
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const sharedType = params.get('type');
+  if (sharedType && TYPES[sharedType]) {
+    showResult(sharedType);
+  }
+});
 </script>
 </body>
 </html>
