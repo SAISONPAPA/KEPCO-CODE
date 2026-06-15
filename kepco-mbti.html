@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>나는 어떤 한전인? | KEPCO 직원 유형 테스트</title>
+  <title>나는 어떤 KEPCO인 일까? | KEPCO 직원 유형 테스트</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,10 +181,10 @@
   <div id="screen-intro">
     <span class="intro-emoji">⚡</span>
     <div class="intro-tag">KEPCO 직원 유형 테스트</div>
-    <h1 class="intro-title">나는 어떤<br><span>한전인</span>일까?</h1>
+    <h1 class="intro-title">나는 어떤<br><span>KEPCO인</span> 일까?</h1>
     <p class="intro-desc">
       12개의 질문으로 알아보는<br>
-      나의 한전 직원 캐릭터 유형!<br>
+      나의 KEPCO 직원 캐릭터 유형!<br>
       KEPCO CODE 10가지와 연결됩니다.
     </p>
     <div class="intro-meta">
@@ -216,7 +216,7 @@
     <div class="result-card">
       <div class="result-header">
         <span class="result-emoji" id="res-emoji"></span>
-        <div class="result-type-label">당신의 한전 직원 유형</div>
+        <div class="result-type-label">나의 KEPCO CODE 유형</div>
         <div class="result-type-name" id="res-name"></div>
         <div class="result-code-badge" id="res-code"></div>
       </div>
@@ -602,11 +602,11 @@ function shareResult() {
     ? null : Object.keys(TYPES).find(k => TYPES[k].code === document.getElementById('res-code').textContent.trim())];
 
   const shareUrl = window.location.href;
-  const shareText = `나는 "${type.name}"! ${type.emoji}\n"${type.slogan}"\n\n나는 어떤 한전인일까? 너도 테스트 해봐!`;
+  const shareText = `나는 "${type.name}"! ${type.emoji}\n"${type.slogan}"\n\n나는 어떤 KEPCO인 일까? 너도 테스트 해봐!`;
 
   if (navigator.share) {
     navigator.share({
-      title: 'KEPCO CODE - 나는 어떤 한전인일까?',
+      title: 'KEPCO CODE - 나는 어떤 KEPCO인 일까?',
       text: shareText,
       url: shareUrl
     }).catch(() => {}); // 사용자가 취소해도 에러 무시
