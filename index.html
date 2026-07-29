@@ -145,6 +145,79 @@
     .guide-list li:last-child { border-bottom:none; }
     .guide-list li::before { content:'→'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
 
+    /* 스와이프 테스트 카드 */
+    .swipe-test-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; }
+    .swipe-test-card {
+      display:block; background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+      border-radius:18px; padding:26px 22px; text-decoration:none;
+      box-shadow:0 4px 20px rgba(11,37,89,0.15);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .swipe-test-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(11,37,89,0.22); }
+    .stc-emoji { font-size:2.2rem; display:block; margin-bottom:12px; }
+    .stc-title { font-size:1.05rem; font-weight:900; color:var(--white); margin-bottom:6px; }
+    .stc-desc { font-size:0.78rem; color:rgba(255,255,255,0.6); margin-bottom:16px; }
+    .stc-arrow { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.78rem; font-weight:900; padding:6px 14px; border-radius:20px; }
+
+    /* 리더십 한마디 */
+    .leadership-input-wrap { margin-bottom: 20px; }
+    .leadership-input-box {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: var(--white); border: 2px solid var(--navy);
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 12px;
+    }
+    .leadership-prefix { font-size: 1rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
+    .leadership-suffix { font-size: 1rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
+    .leadership-input {
+      flex: 1; min-width: 160px; border: none; outline: none;
+      font-size: 1rem; font-family: 'Noto Sans KR', sans-serif;
+      color: var(--gray-800); background: transparent;
+    }
+    .leadership-input::placeholder { color: var(--gray-500); }
+    .leadership-submit {
+      width: 100%; background: var(--navy); color: var(--white);
+      border: none; border-radius: 10px; padding: 13px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s;
+    }
+    .leadership-submit:hover { background: var(--navy-mid); }
+    .leadership-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .leadership-char-count { font-size: 0.75rem; color: var(--gray-500); text-align: right; margin-top: 6px; }
+    .leadership-success {
+      background: #DCFCE7; color: #166534; border-radius: 10px;
+      padding: 12px 16px; font-size: 0.88rem; font-weight: 600;
+      margin-bottom: 16px; text-align: center;
+    }
+    .firebase-notice {
+      background: #FEF9C3; color: #854D0E; border-radius: 10px;
+      padding: 12px 16px; font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 24px; text-align: center;
+    }
+    .leadership-list-wrap { margin-top: 8px; }
+    .leadership-list-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+    .leadership-list { display: flex; flex-direction: column; gap: 10px; }
+    .leadership-item {
+      background: var(--white); border-radius: 12px; padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      font-size: 0.92rem; color: var(--gray-800); line-height: 1.6;
+    }
+    .leadership-item .item-text { font-weight: 600; color: var(--navy); }
+    .leadership-item .item-time { font-size: 0.72rem; color: var(--gray-500); margin-top: 4px; }
+    .leadership-empty { text-align: center; padding: 40px 20px; color: var(--gray-500); font-size: 0.88rem; }
+
+    /* 월별 서브탭 */
+    .month-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+    .month-tab-btn {
+      border: 2px solid var(--gray-200); background: var(--white);
+      color: var(--gray-500); font-size: 0.82rem; font-weight: 700;
+      padding: 6px 16px; border-radius: 20px; cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .month-tab-btn:hover { border-color: var(--navy-light); color: var(--navy); }
+    .month-tab-btn.active { border-color: var(--navy); background: var(--navy); color: var(--white); }
+    .month-tab-btn .current-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; animation: pulse 2s infinite; }
+
     /* MBTI 배너 */
     .mbti-banner {
       background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
@@ -283,6 +356,24 @@
     .mv-main-title { font-size:1.2rem; font-weight:900; color:var(--white); margin-bottom:6px; }
     .mv-main-desc  { font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.7; }
     .mv-main-tags  { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+
+    /* 제작 노트 */
+    .mv-notes { display:flex; flex-direction:column; gap:18px; }
+    .mv-note-item {
+      background:#1F2937; border-left:3px solid var(--accent);
+      border-radius:0 10px 10px 0; padding:14px 18px;
+    }
+    .mv-note-label {
+      font-size:0.7rem; font-weight:900; letter-spacing:0.08em;
+      color:var(--accent); text-transform:uppercase; margin-bottom:6px;
+    }
+    .mv-note-text { font-size:0.85rem; color:rgba(255,255,255,0.75); line-height:1.75; }
+    .mv-note-text strong { color:var(--accent); }
+    .mv-tool-tag {
+      display:inline-block; background:rgba(232,164,0,0.15); color:var(--accent);
+      font-size:0.78rem; font-weight:700; padding:3px 10px; border-radius:20px;
+    }
+    .mv-tool-sep { color:rgba(255,255,255,0.3); margin:0 6px; }
     .mv-tag { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); font-size:0.75rem; padding:4px 12px; border-radius:20px; }
 
     /* MV 목록 그리드 */
@@ -326,6 +417,25 @@
       .schedule-table th, .schedule-table td { padding:10px 12px; font-size:0.8rem; }
     }
   </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvktxxcjNBnykd7P_DivF5IUCX_2GkNIc",
+    authDomain: "kepco-code.firebaseapp.com",
+    projectId: "kepco-code",
+    storageBucket: "kepco-code.firebasestorage.app",
+    messagingSenderId: "893939075129",
+    appId: "1:893939075129:web:0f3705b6d332ea711aa5e8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 전역에서 접근 가능하도록 window에 노출
+  window.__firebase = { db, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp };
+</script>
 </head>
 <body>
 
@@ -421,13 +531,17 @@
       <p class="section-label">This Month</p>
       <h2 class="section-title">이달의 KEPCO CODE</h2>
       <div class="divider"></div>
+
+      <!-- 월별 서브탭 -->
+      <div class="month-tabs" id="month-tabs"></div>
+
       <p class="section-desc" id="this-month-desc" style="margin-bottom:32px;"></p>
       <div class="code-cards" id="code-cards-container"></div>
     </div>
   </div>
 
-  <!-- MBTI 배너 -->
-  <div class="section" style="background:var(--white); padding-top:0;">
+  <!-- MBTI 배너 (7월 활동) -->
+  <div id="mbti-banner-section" class="section" style="background:var(--white); padding-top:0; display:none;">
     <div class="section-inner">
       <div class="mbti-banner">
         <div>
@@ -436,6 +550,70 @@
           <p>12문항으로 알아보는 나의 KEPCO 직원 캐릭터 유형!</p>
         </div>
         <a class="btn-mbti" href="kepco-mbti.html">테스트 하러가기 →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리더십/팔로워 스와이프 테스트 (8월 활동) -->
+  <div id="swipe-test-section" class="section" style="background:var(--white); display:none;">
+    <div class="section-inner">
+      <p class="section-label">8월 참여 활동</p>
+      <h2 class="section-title">나의 유형은 무엇일까?</h2>
+      <div class="divider"></div>
+      <p class="section-desc" style="margin-bottom:24px;">카드를 넘기며 12가지 상황에 답하고, 나의 리더십·팔로워 유형을 확인해보세요!</p>
+      <div class="swipe-test-cards">
+        <a class="swipe-test-card" href="leadership-swipe.html">
+          <span class="stc-emoji">🧭</span>
+          <div class="stc-title">나의 리더십 유형은?</div>
+          <div class="stc-desc">12문항 · 6가지 리더십 유형</div>
+          <span class="stc-arrow">시작하기 →</span>
+        </a>
+        <a class="swipe-test-card" href="follower-swipe.html">
+          <span class="stc-emoji">🤝</span>
+          <div class="stc-title">나의 팔로워 유형은?</div>
+          <div class="stc-desc">12문항 · 6가지 팔로워 유형</div>
+          <span class="stc-arrow">시작하기 →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리더십 한마디 (8월 활동) -->
+  <div id="leadership-section" class="section" style="background:var(--gray-100); display:none;">
+    <div class="section-inner">
+      <p class="section-label">8월 참여 활동</p>
+      <h2 class="section-title">나의 리더십 한마디</h2>
+      <div class="divider"></div>
+      <p class="section-desc" style="margin-bottom:28px;">"내가 생각하는 리더십이란 ___이다" — 익명으로 한 줄만 남겨주세요!</p>
+
+      <!-- 입력창 -->
+      <div class="leadership-input-wrap">
+        <div class="leadership-input-box">
+          <span class="leadership-prefix">리더십이란</span>
+          <input type="text" id="leadership-input" class="leadership-input"
+            placeholder="한 줄로 완성해보세요..." maxlength="50"/>
+          <span class="leadership-suffix">이다.</span>
+        </div>
+        <button class="leadership-submit" onclick="submitLeadership()">남기기 →</button>
+        <div class="leadership-char-count"><span id="char-count">0</span> / 50</div>
+      </div>
+
+      <!-- 제출 메시지 -->
+      <div id="leadership-success" style="display:none;" class="leadership-success">
+        ✅ 소중한 한마디가 등록됐어요!
+      </div>
+
+      <!-- Firebase 연동 완료: 평상시 숨김 처리 -->
+      <div id="firebase-notice" class="firebase-notice" style="display:none;">
+        🔧 현재 준비 중입니다. 곧 참여하실 수 있어요!
+      </div>
+
+      <!-- 한마디 목록 -->
+      <div class="leadership-list-wrap">
+        <h4 class="leadership-list-title">💬 동료들의 한마디</h4>
+        <div id="leadership-list" class="leadership-list">
+          <div class="leadership-empty">아직 등록된 한마디가 없어요. 첫 번째로 남겨보세요!</div>
+        </div>
       </div>
     </div>
   </div>
@@ -483,6 +661,39 @@
     </div>
   </div>
 
+  <!-- 제작 노트 -->
+  <div class="mv-list-section">
+    <div class="mv-list-inner">
+      <div class="mv-list-title">🎬 제작 노트</div>
+      <div class="mv-notes">
+        <div class="mv-note-item">
+          <div class="mv-note-label">기획 소재</div>
+          <div class="mv-note-text">기업문화 개선과제 KEPCO CODE</div>
+        </div>
+        <div class="mv-note-item">
+          <div class="mv-note-label">제작 배경</div>
+          <div class="mv-note-text">우리에게 필요한 KEPCO CODE, 조금 더 쉽고 친근하게 MZ 감성으로 전달할 수는 없을까 하는 고민에서 시작됐습니다.</div>
+        </div>
+        <div class="mv-note-item">
+          <div class="mv-note-label">기획 의도</div>
+          <div class="mv-note-text">기존 포스터 형식을 넘어 애니메이션과 음악을 결합해, 오래 기억에 남는 메시지를 전달하고자 했습니다.</div>
+        </div>
+        <div class="mv-note-item">
+          <div class="mv-note-label">왜 &lt;WALL 2 DOOR&gt;인가</div>
+          <div class="mv-note-text">10대 기업문화 개선과제를 통해 직원들 사이의 벽(WALL)이 허물어지고, 서로를 향한 소통의 문(DOOR)으로 변하길 바라는 마음을 담아 <strong>WALL 2 DOOR</strong>라는 제목이 탄생했습니다.</div>
+        </div>
+        <div class="mv-note-item">
+          <div class="mv-note-label">제작 과정</div>
+          <div class="mv-note-text">
+            <span class="mv-tool-tag">ChatGPT</span> 기획·작사<span class="mv-tool-sep">·</span>
+            <span class="mv-tool-tag">Suno AI</span> 비트·멜로디<span class="mv-tool-sep">·</span>
+            <span class="mv-tool-tag">Midjourney</span> 애니메이션
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- LIGHTBOX -->
@@ -501,35 +712,68 @@
    ★★★ 매달 여기만 수정하세요! ★★★
    ================================================================ */
 
-const CURRENT_MONTH = 7;
+const CURRENT_MONTH = 8;
 
 const THIS_MONTH = {
-  label: "2026년 7월",
+  label: "2026년 8월",
+  month: 8,
   codes: [
     {
-      number: "CODE 08",
-      name: "조직활력",
-      slogan: "우리는 서로를 배려하며\n즐거운 업무분위기를 만듭니다.",
+      number: "CODE 10",
+      name: "안전문화",
+      slogan: "우리는 동료의 작은 위험도\n놓치지 않고 먼저 살핍니다.",
       guides: [
-        "출근 시 부서원과 눈 맞추며 인사 나누기",
-        "내 업무가 끝났더라도 바쁜 동료에게 먼저 도움 필요한지 물어보기",
-        "부서 간 이기주의를 내세우기보다 타 부서 협업 요청에 긍정적으로 협조하기",
-        "동료의 취미·관심사를 나누는 짧은 대화로 유대감 쌓기"
+        "규정된 안전장구는 예외 없이 착용하고 동료의 착용 상태도 함께 체크하기",
+        "현장업무 시 잠재적 위험요소를 확인하고 동료에게 공유, 즉시 조치하기",
+        "사고로 이어질 뻔한 아차사고 사례도 발견 즉시 보고하여 재발 방지하기",
+        "안전 수칙을 단순히 지키는 것을 넘어 동료에게 먼저 알려주는 습관 갖기"
       ]
     },
     {
-      number: "CODE 07",
-      name: "소통활성화",
-      slogan: "우리는 편견 없이 듣고,\n두려움 없이 말합니다.",
+      number: "CODE 03",
+      name: "리더십",
+      slogan: "함께 고민하고 변화를 이끄는\n당신이 진정한 리더입니다.",
       guides: [
-        "회의 시 상대방의 말을 끝까지 경청하기",
-        '"어차피 안 될 것 같아서…" 대신 우선 의견 말해보기',
-        '타인의 의견이 다를 때 "그건 아니다" 대신 다른 방식으로 부드럽게 의견 나누기',
-        "업무 진행 상황을 관련 부서·담당자와 수시로 공유하는 습관 갖기"
+        "부서원의 아이디어가 생각과 달라도 우선 '한번 해봅시다'라고 함께 시도해보기",
+        "내가 먼저 솔선수범해야 할 행동 한 가지를 공개적으로 정하고 한 달간 꾸준히 실천하기",
+        "부서원 개개인의 강점을 발견해보고, 그에 맞는 칭찬과 역할을 맡겨보기",
+        "직급 무관하게 팀원의 의견을 끝까지 듣고 결정에 반영하는 습관 갖기"
       ]
     }
   ]
 };
+
+/* ★ 지난달 내역 — 매달 현재를 여기로 옮기세요 ★ */
+const PAST_MONTHS = [
+  {
+    label: "2026년 7월",
+    month: 7,
+    codes: [
+      {
+        number: "CODE 08",
+        name: "조직활력",
+        slogan: "우리는 서로를 배려하며\n즐거운 업무분위기를 만듭니다.",
+        guides: [
+          "출근 시 부서원과 눈 맞추며 인사 나누기",
+          "내 업무가 끝났더라도 바쁜 동료에게 먼저 도움 필요한지 물어보기",
+          "부서 간 이기주의를 내세우기보다 타 부서 협업 요청에 긍정적으로 협조하기",
+          "동료의 취미·관심사를 나누는 짧은 대화로 유대감 쌓기"
+        ]
+      },
+      {
+        number: "CODE 07",
+        name: "소통활성화",
+        slogan: "우리는 편견 없이 듣고,\n두려움 없이 말합니다.",
+        guides: [
+          "회의 시 상대방의 말을 끝까지 경청하기",
+          '"어차피 안 될 것 같아서…" 대신 우선 의견 말해보기',
+          '타인의 의견이 다를 때 "그건 아니다" 대신 다른 방식으로 부드럽게 의견 나누기',
+          "업무 진행 상황을 관련 부서·담당자와 수시로 공유하는 습관 갖기"
+        ]
+      }
+    ]
+  }
+];
 
 const SCHEDULE = [
   { month:7,  label:"7월",  codes:["조직활력","소통활성화"], pillStyles:["pill-green","pill-blue"],   theme:"서로 배려하며 편견 없이 소통하기" },
@@ -562,14 +806,13 @@ const ALL_CODES = [
    둘 다 자동으로 임베드 변환됩니다
    ================================================================ */
 const MV_LIST = [
-  // 영상이 생기면 아래 형식으로 추가하세요:
-  // {
-  //   title: "KEPCO CODE 2026 MV",
-  //   desc: "한전 기업문화 개선과제 KEPCO CODE 뮤직비디오",
-  //   url: "https://youtu.be/XXXXXXXX",
-  //   tags: ["KEPCO CODE", "2026", "조직활력"],
-  //   thumb: ""   // 썸네일 이미지 경로 (없으면 빈 문자열)
-  // }
+  {
+    title: "KEPCO CODE 2026 MV",
+    desc: "기업문화 개선과제 KEPCO CODE 뮤직비디오",
+    url: "https://youtu.be/RcwgOoDLm-g",
+    tags: ["KEPCO CODE", "2026"],
+    thumb: ""
+  }
 ];
 
 /* ── MV 렌더링 ── */
@@ -645,6 +888,124 @@ function initMvPlayer() {
 initMvPlayer();
 
 /* ================================================================
+   ★ 리더십 한마디 — Firebase 연동 완료
+   ================================================================ */
+
+// 글자수 카운트
+const leadershipInput = document.getElementById('leadership-input');
+if (leadershipInput) {
+  leadershipInput.addEventListener('input', () => {
+    document.getElementById('char-count').textContent = leadershipInput.value.length;
+  });
+}
+
+/* ── 부적절한 표현 1차 필터링 ──
+   완벽한 필터는 아니며, 흔한 욕설/비속어를 1차로 걸러내는 용도입니다.
+   초성·변형·우회 표현까지는 못 잡을 수 있어 최종 검수는 Firebase 콘솔에서 진행해주세요. */
+const BANNED_WORDS = [
+  '씨발','씨팔','씨바','시발','시팔','ㅅㅂ','ㅆㅂ','ㅅㅍ',
+  '개새끼','개색기','개새기','병신','ㅂㅅ','좆','존나','조낸','ㅈㄴ',
+  '지랄','ㅈㄹ','미친놈','미친년','새끼','썅','fuck','shit','bitch',
+  '닥쳐','꺼져','죽어','한남','한녀','틀딱','급식충','맘충','정신병자',
+  '쌍놈','후레자식','창녀','걸레','쓰레기같은','개똥','똥멍청이',
+  // 19금 / 성적 표현
+  '섹스','sex','porn','야동','19금','자위','성기','보지','자지',
+  '떡치','따먹','걸레년','성노예','성폭행','강간','몸매평가',
+  '가슴만지','유두','av배우','av녀','성인방송','폰섹','조건만남'
+];
+
+function containsBannedWord(text) {
+  const normalized = text.toLowerCase().replace(/\s/g, '');
+  return BANNED_WORDS.some(word => normalized.includes(word.toLowerCase()));
+}
+
+function submitLeadership() {
+  const input = document.getElementById('leadership-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) { alert('내용을 입력해주세요!'); return; }
+
+  if (containsBannedWord(text)) {
+    alert('⚠️ 적절하지 않은 표현이 포함되어 있어요. 서로를 존중하는 표현으로 다시 작성해주세요.');
+    return;
+  }
+
+  if (!window.__firebase) {
+    document.getElementById('firebase-notice').style.display = 'block';
+    return;
+  }
+
+  const { db, collection, addDoc, serverTimestamp } = window.__firebase;
+  const submitBtn = document.querySelector('.leadership-submit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '등록 중...';
+
+  addDoc(collection(db, 'leadership_messages'), {
+    text: text,
+    createdAt: serverTimestamp()
+  }).then(() => {
+    input.value = '';
+    document.getElementById('char-count').textContent = '0';
+    document.getElementById('leadership-success').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('leadership-success').style.display = 'none';
+    }, 2500);
+  }).catch((err) => {
+    console.error(err);
+    alert('등록에 실패했어요. 잠시 후 다시 시도해주세요.');
+  }).finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.textContent = '남기기 →';
+  });
+}
+
+// 실시간으로 한마디 목록 불러오기
+function listenLeadershipMessages() {
+  if (!window.__firebase) return;
+  const { db, collection, query, orderBy, limit, onSnapshot } = window.__firebase;
+
+  const q = query(collection(db, 'leadership_messages'), orderBy('createdAt', 'desc'), limit(50));
+  onSnapshot(q, (snapshot) => {
+    const listEl = document.getElementById('leadership-list');
+    if (!listEl) return;
+
+    if (snapshot.empty) {
+      listEl.innerHTML = '<div class="leadership-empty">아직 등록된 한마디가 없어요. 첫 번째로 남겨보세요!</div>';
+      return;
+    }
+
+    listEl.innerHTML = snapshot.docs.map(doc => {
+      const data = doc.data();
+      const time = data.createdAt?.toDate
+        ? data.createdAt.toDate().toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : '방금 전';
+      return `
+        <div class="leadership-item">
+          <span class="item-text">"리더십이란 ${escapeHtml(data.text)}이다."</span>
+          <div class="item-time">${time}</div>
+        </div>`;
+    }).join('');
+  }, (err) => {
+    console.error('리더십 메시지 로드 실패:', err);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Firebase 로드 대기 후 리스너 시작
+function waitForFirebaseAndListen() {
+  if (window.__firebase) {
+    listenLeadershipMessages();
+  } else {
+    setTimeout(waitForFirebaseAndListen, 100);
+  }
+}
+waitForFirebaseAndListen();
+
+/* ================================================================
    탭 전환
    ================================================================ */
 function switchTab(tabId, btn) {
@@ -664,27 +1025,65 @@ const codeNames = THIS_MONTH.codes.map(c => c.name).join(' · ');
 document.getElementById('hero-badge-text').textContent =
   `${THIS_MONTH.label} 현재 실천 중 — ${codeNames}`;
 
-// 이달의 desc
-document.getElementById('this-month-desc').textContent =
-  `${THIS_MONTH.label}, 함께 실천할 두 가지 CODE입니다.`;
+// 월별 탭 렌더링
+const allMonths = [THIS_MONTH, ...PAST_MONTHS];
+const monthTabsContainer = document.getElementById('month-tabs');
 
-// 이달의 CODE 카드
-const cardsContainer = document.getElementById('code-cards-container');
-THIS_MONTH.codes.forEach(code => {
-  const el = document.createElement('div');
-  el.className = 'code-card';
-  el.innerHTML = `
-    <div class="code-card-header">
-      <p class="code-number">${code.number} · ${CURRENT_MONTH}월</p>
-      <h3 class="code-name">${code.name}</h3>
-      <p class="code-slogan">${code.slogan}</p>
-    </div>
-    <div class="code-card-body">
-      <h4>이렇게 실천해보세요</h4>
-      <ul class="guide-list">${code.guides.map(g=>`<li>${g}</li>`).join('')}</ul>
-    </div>`;
-  cardsContainer.appendChild(el);
+function renderMonthCards(monthData) {
+  document.getElementById('this-month-desc').textContent =
+    `${monthData.label}, 함께 실천한 두 가지 CODE입니다.`;
+  const cardsContainer = document.getElementById('code-cards-container');
+  cardsContainer.innerHTML = '';
+  monthData.codes.forEach(code => {
+    const el = document.createElement('div');
+    el.className = 'code-card';
+    el.innerHTML = `
+      <div class="code-card-header">
+        <p class="code-number">${code.number} · ${monthData.label}</p>
+        <h3 class="code-name">${code.name}</h3>
+        <p class="code-slogan">${code.slogan}</p>
+      </div>
+      <div class="code-card-body">
+        <h4>이렇게 실천해보세요</h4>
+        <ul class="guide-list">${code.guides.map(g=>`<li>${g}</li>`).join('')}</ul>
+      </div>`;
+    cardsContainer.appendChild(el);
+  });
+
+  // 7월에만 MBTI 배너 표시
+  const mbtiBanner = document.getElementById('mbti-banner-section');
+  if (mbtiBanner) {
+    mbtiBanner.style.display = monthData.month === 7 ? 'block' : 'none';
+  }
+  // 8월에만 리더십 한마디 섹션 표시
+  const leadershipSection = document.getElementById('leadership-section');
+  if (leadershipSection) {
+    leadershipSection.style.display = monthData.month === 8 ? 'block' : 'none';
+  }
+  // 8월에만 스와이프 테스트 섹션 표시
+  const swipeTestSection = document.getElementById('swipe-test-section');
+  if (swipeTestSection) {
+    swipeTestSection.style.display = monthData.month === 8 ? 'block' : 'none';
+  }
+}
+
+allMonths.forEach((monthData, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'month-tab-btn' + (i === 0 ? ' active' : '');
+  const isCurrent = i === 0;
+  btn.innerHTML = isCurrent
+    ? `<span class="current-dot"></span>${monthData.label} (이달)`
+    : monthData.label;
+  btn.onclick = () => {
+    document.querySelectorAll('.month-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMonthCards(monthData);
+  };
+  monthTabsContainer.appendChild(btn);
 });
+
+// 기본: 이달 카드 렌더링
+renderMonthCards(THIS_MONTH);
 
 // 전체 CODE
 const activeNames = THIS_MONTH.codes.map(c => c.name);
@@ -761,6 +1160,36 @@ const NOVEL_LIST = [
 그저 탕비실에서 '오늘 커피 진짜 맛없네요'라고 말할 수 있는 '뻔뻔한 용기'에서 시작된다는 것.
 
 내일은 탕비실에서 누구를 붙잡고 무슨 시시콜콜한 이야기를 해볼까?`,
+    images: []
+  },
+  {
+    ep: "EP.02",
+    title: "사무실 파파라치(?)가 된 사연: 위험 요소 포토 챌린지 대작전",
+    code: "안전문화",
+    date: "2026년 8월",
+    content: `8월 사내 공지사항에 뜬 '사무실 내 위험 요소 포토 챌린지'.
+처음엔 "또 뭘 찾아내서 찍으라는 거야?"라며 가볍게 넘기려 했는데, 생각해보니 우리 사무실도 은근히 무심코 지나쳤던 부분들이 있었다.
+
+승부욕이 발동한 나 김 대리, 점심시간을 틈타 스마트폰 카메라를 켠 채 사무실을 스캔하기 시작했다. 마치 사내 비밀요원이라도 된 것처럼 복도와 탕비실을 누볐다.
+
+"오, 저기 프린터 옆에 위태롭게 쌓인 용지 더미, 조금만 건드려도 쓰러지겠는데?" (찰칵)
+"여긴 콘센트 주변에 먼지가 좀 쌓였네. 미리미리 치워야지!" (찰칵)
+
+사진을 열심히 찍고 있는데, 옆자리 박 대리님이 지나가다 나를 힐끗 보며 웃었다.
+"김 대리, 뭐 해? 무슨 사내 파파라치 같네."
+"아, 대리님! 이거 이번 달 '사무실 내 위험 요소 포토 챌린지' 응모하려구요! 우리가 직접 찾아서 개선하면 사무실도 안전해지고 상품도 노릴 수 있잖아요?"
+
+내 말을 들은 박 대리가 무릎을 탁 쳤다.
+"아, 맞다! 그러고 보니 저기 탕비실 멀티탭도 오래됐던데. 현장뿐만 아니라 사무실에서도 잠재적 위험요소를 확인하고 동료와 공유해서 바로 조치해야지."
+
+우리는 그 자리에서 바로 사진만 찍고 끝내는 게 아니라, 통행을 방해하던 박스를 치우고 용지함을 안전한 곳으로 재배치했다. 말 그대로 '즉시 조치' 완료.
+
+퇴근길, 기업문화 포털에 우리가 찍은 개선 전후 사진을 올렸다.
+비록 사내 포털엔 다른 부서의 기발한 아이디어들도 가득했지만, 우리 손으로 직접 사무실의 위험 요소를 없애고 안전을 챙겼다는 생각에 왠지 모르게 뿌듯했다.
+
+💡 오늘의 교훈
+'위험 요소 챌린지'는 누군가를 지적하는 게 아니라, 우리 동료와 내 일터를 내 손으로 더 안전하게 만드는 가장 유쾌한 방법이었다.
+(다음엔 꼭 1등 해서 상품 받아야지.)`,
     images: []
   }
 ];
