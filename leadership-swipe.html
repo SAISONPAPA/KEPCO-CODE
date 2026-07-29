@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>나의 리더십 유형은? | KEPCO CODE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0B2559;
+      --navy-mid: #1A3A7A;
+      --navy-light: #2B52A3;
+      --accent: #E8A400;
+      --white: #FFFFFF;
+      --gray-100: #F4F6FA;
+      --gray-200: #E2E8F0;
+      --gray-500: #64748B;
+      --gray-800: #1E293B;
+      --red: #EF4444;
+      --green: #22C55E;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    nav {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 56px;
+    }
+    .nav-logo { color: var(--white); font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .nav-logo .badge { background: var(--accent); color: var(--navy); font-size: 0.65rem; font-weight: 900; padding: 2px 7px; border-radius: 20px; }
+    .nav-back { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; }
+
+    .wrapper { max-width: 480px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pop { 0%{transform:scale(0.85);opacity:0} 100%{transform:scale(1);opacity:1} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* ── INTRO ── */
+    #screen-intro { text-align:center; animation: fadeIn 0.5s ease; }
+    .intro-emoji { font-size:3.6rem; margin-bottom:16px; display:block; animation: float 3s ease-in-out infinite; }
+    .intro-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.7rem; font-weight:900; letter-spacing:0.1em; padding:4px 14px; border-radius:20px; margin-bottom:14px; }
+    .intro-title { font-size:clamp(1.5rem,5vw,2.1rem); font-weight:900; color:var(--navy); line-height:1.3; margin-bottom:10px; }
+    .intro-title span { color:var(--accent); }
+    .intro-desc { font-size:0.9rem; color:var(--gray-500); line-height:1.8; margin-bottom:24px; }
+    .intro-guide {
+      background:var(--white); border-radius:16px; padding:20px;
+      margin-bottom:28px; display:flex; justify-content:center; gap:24px;
+    }
+    .guide-item { text-align:center; }
+    .guide-icon { font-size:1.6rem; margin-bottom:6px; display:block; }
+    .guide-label { font-size:0.72rem; color:var(--gray-500); font-weight:600; }
+    .btn-start {
+      background:var(--navy); color:var(--white);
+      font-size:1rem; font-weight:700; padding:16px 44px; border-radius:50px;
+      border:none; cursor:pointer; font-family:inherit;
+      box-shadow:0 4px 20px rgba(11,37,89,0.25);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-start:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(11,37,89,0.3); }
+
+    /* ── SWIPE ── */
+    #screen-swipe { display:none; }
+    .progress-wrap { margin-bottom:24px; }
+    .progress-label { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--gray-500); margin-bottom:8px; }
+    .progress-bar { height:5px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--navy),var(--navy-light)); border-radius:3px; transition:width 0.4s ease; }
+
+    .card-stage {
+      position: relative; height: 320px; margin-bottom: 20px;
+    }
+    .swipe-card {
+      position:absolute; inset:0;
+      background:var(--white); border-radius:22px;
+      box-shadow:0 8px 32px rgba(11,37,89,0.14);
+      padding:28px 22px; display:flex; flex-direction:column;
+      cursor:grab; touch-action:none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .swipe-card.dragging { transition:none; cursor:grabbing; }
+    .swipe-card.exit-left  { transform: translateX(-140%) rotate(-20deg) !important; opacity:0; }
+    .swipe-card.exit-right { transform: translateX(140%) rotate(20deg) !important; opacity:0; }
+
+    .card-situation {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--gray-100); border-radius:20px;
+      padding:6px 14px; font-size:0.78rem; color:var(--gray-500);
+      margin-bottom:20px; align-self:flex-start;
+    }
+    .card-text { font-size:1.15rem; font-weight:700; color:var(--navy); line-height:1.6; margin-bottom:20px; }
+
+    /* 카드 내 반반 선택 영역 */
+    .card-choices {
+      display:flex; gap:10px; margin-top:auto;
+    }
+    .choice-half {
+      flex:1; border-radius:14px; padding:16px 12px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; font-size:0.86rem; font-weight:700;
+      line-height:1.5; cursor:pointer; transition:all 0.15s;
+      min-height:88px;
+    }
+    .choice-left  { background:var(--navy); color:var(--white); border:2px solid var(--navy); }
+    .choice-right { background:var(--accent); color:var(--navy); border:2px solid var(--accent); }
+    .choice-half:hover { transform: scale(0.98); }
+    .choice-half:active { transform: scale(0.94); }
+
+    /* 드래그 오버레이 스탬프 */
+    .stamp {
+      position:absolute; top:32px; padding:8px 20px;
+      border:4px solid; border-radius:10px;
+      font-size:1.3rem; font-weight:900;
+      transform:rotate(-15deg); opacity:0;
+      pointer-events:none;
+    }
+    .stamp-left  { left:24px; color:var(--navy); border-color:var(--navy); }
+    .stamp-right { right:24px; color:var(--accent); border-color:var(--accent); transform:rotate(15deg); }
+
+    /* ── RESULT ── */
+    #screen-result { display:none; animation: fadeIn 0.5s ease; }
+    .result-card {
+      background:var(--white); border-radius:24px; overflow:hidden;
+      box-shadow:0 8px 40px rgba(11,37,89,0.12); margin-bottom:24px;
+    }
+    .result-header {
+      background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+      padding:40px 28px 30px; text-align:center; color:var(--white);
+    }
+    .result-emoji { font-size:4rem; display:block; margin-bottom:14px; animation:pop 0.5s ease; }
+    .result-label { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; color:var(--accent); margin-bottom:8px; }
+    .result-name { font-size:1.6rem; font-weight:900; margin-bottom:6px; }
+    .result-badge { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.72rem; font-weight:900; padding:4px 14px; border-radius:20px; }
+    .result-body { padding:26px 28px; }
+    .result-quote {
+      font-size:0.95rem; font-weight:700; color:var(--navy);
+      background:var(--gray-100); border-left:4px solid var(--accent);
+      padding:14px 18px; border-radius:0 10px 10px 0; margin-bottom:18px; line-height:1.6;
+    }
+    .result-desc { font-size:0.9rem; color:var(--gray-500); line-height:1.85; margin-bottom:22px; }
+    .result-traits h4 { font-size:0.78rem; font-weight:700; color:var(--navy-light); letter-spacing:0.08em; margin-bottom:12px; }
+    .trait-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+    .trait-tag { background:var(--gray-100); color:var(--navy); font-size:0.78rem; font-weight:600; padding:5px 12px; border-radius:20px; border:1px solid var(--gray-200); }
+    .result-tip {
+      background:#FFFBF0; border:1px solid #FDE68A; border-radius:12px;
+      padding:14px 16px; font-size:0.85rem; color:#92400E; line-height:1.7;
+      margin-bottom: 14px;
+    }
+    .result-match {
+      background:var(--gray-100); border:1px solid var(--gray-200); border-radius:14px;
+      padding:16px 18px; display:flex; align-items:center; gap:14px;
+    }
+    .result-match .match-emoji { font-size:2rem; flex-shrink:0; }
+    .result-match .match-text { font-size:0.82rem; color:var(--gray-500); line-height:1.6; }
+    .result-match .match-text strong { display:block; font-size:0.95rem; color:var(--navy); margin-bottom:2px; }
+    .result-actions { display:flex; gap:12px; }
+    .btn-retry { flex:1; background:var(--white); color:var(--navy); border:2px solid var(--navy); border-radius:50px; padding:13px 20px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-home { flex:1; background:var(--navy); color:var(--white); border:none; border-radius:50px; padding:13px 20px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">KEPCO CODE <span class="badge">'26</span></a>
+  <a class="nav-back" href="index.html">← 홈으로</a>
+</nav>
+
+<div class="wrapper">
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <span class="intro-emoji">🧭</span>
+    <div class="intro-tag">8월 참여 활동 · 리더십</div>
+    <h1 class="intro-title">나의 <span>리더십</span><br>유형은?</h1>
+    <p class="intro-desc">12가지 상황, 당신의 선택은?<br>카드를 좌우로 넘기며 답해보세요.</p>
+    <div class="intro-guide">
+      <div class="guide-item">
+        <span class="guide-icon">👈</span>
+        <span class="guide-label">왼쪽 선택</span>
+      </div>
+      <div class="guide-item">
+        <span class="guide-icon">👉</span>
+        <span class="guide-label">오른쪽 선택</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">시작하기 →</button>
+  </div>
+
+  <!-- SWIPE -->
+  <div id="screen-swipe">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-text">1 / 8</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card-stage" id="card-stage"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="result-emoji" id="res-emoji"></span>
+        <div class="result-label">나의 리더십 유형</div>
+        <div class="result-name" id="res-name"></div>
+        <div class="result-badge" id="res-badge"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-quote" id="res-quote"></div>
+        <div class="result-desc" id="res-desc"></div>
+        <div class="result-traits">
+          <h4>✨ 나의 리더십 키워드</h4>
+          <div class="trait-list" id="res-traits"></div>
+        </div>
+        <div class="result-tip" id="res-tip"></div>
+        <div class="result-match" id="res-match"></div>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-retry" onclick="startQuiz()">🔄 다시하기</button>
+      <a class="btn-home" href="index.html">🏠 홈으로</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   8개 상황 — 각 선택지는 리더십 유형에 점수 부여
+   유형: coach(코칭형) direct(추진형) support(지원형)
+         vision(비전형) empathy(공감형) system(시스템형)
+══════════════════════════════════════ */
+const QUESTIONS = [
+  {
+    situation: "📍 팀원이 실수했을 때",
+    text: "후배가 중요한 보고서에서 실수를 했다. 당신의 선택은?",
+    left:  { text: "혼자 해결 방법을 찾아보게 기다린다", type: "coach" },
+    right: { text: "함께 앉아서 하나씩 짚어준다", type: "support" }
+  },
+  {
+    situation: "📍 새 프로젝트 시작",
+    text: "새 프로젝트를 맡았다. 팀원들에게 어떻게 방향을 제시하나?",
+    left:  { text: "큰 그림과 목표를 먼저 공유한다", type: "vision" },
+    right: { text: "구체적인 실행 계획부터 짠다", type: "direct" }
+  },
+  {
+    situation: "📍 의견 충돌 상황",
+    text: "팀원 두 명이 서로 다른 의견으로 부딪혔다.",
+    left:  { text: "각자 입장을 충분히 들어본다", type: "empathy" },
+    right: { text: "명확한 기준을 세워 정리한다", type: "system" }
+  },
+  {
+    situation: "📍 업무 배분",
+    text: "새 업무가 생겼다. 어떻게 배분하나?",
+    left:  { text: "각자의 강점에 맞게 맡긴다", type: "coach" },
+    right: { text: "명확한 역할과 기한을 정해준다", type: "system" }
+  },
+  {
+    situation: "📍 팀원이 힘들어할 때",
+    text: "팀원이 요즘 지쳐 보인다. 어떻게 하나?",
+    left:  { text: "먼저 다가가 마음을 물어본다", type: "empathy" },
+    right: { text: "업무를 조정해서 부담을 줄여준다", type: "support" }
+  },
+  {
+    situation: "📍 회의 진행 방식",
+    text: "회의를 이끌 때 당신의 스타일은?",
+    left:  { text: "자유롭게 의견을 던지게 한다", type: "vision" },
+    right: { text: "안건별로 순서대로 진행한다", type: "system" }
+  },
+  {
+    situation: "📍 성과가 났을 때",
+    text: "프로젝트가 성공적으로 끝났다. 어떻게 하나?",
+    left:  { text: "팀원 개개인의 기여를 짚어 칭찬한다", type: "support" },
+    right: { text: "다음 목표를 바로 제시한다", type: "direct" }
+  },
+  {
+    situation: "📍 결정을 내려야 할 때",
+    text: "빠른 결정이 필요한 상황이다.",
+    left:  { text: "팀원 의견을 들은 후 결정한다", type: "empathy" },
+    right: { text: "내가 먼저 판단하고 공유한다", type: "direct" }
+  },
+  {
+    situation: "📍 신입 교육",
+    text: "신입 직원의 적응을 도와야 한다. 어떻게 하나?",
+    left:  { text: "스스로 부딪히며 배우도록 곁에서 지켜본다", type: "coach" },
+    right: { text: "우리 팀의 비전과 의미를 먼저 이야기해준다", type: "vision" }
+  },
+  {
+    situation: "📍 갈등이 반복될 때",
+    text: "같은 문제로 갈등이 반복된다. 어떻게 하나?",
+    left:  { text: "당사자들의 감정을 먼저 다독인다", type: "empathy" },
+    right: { text: "재발 방지를 위한 규칙을 만든다", type: "system" }
+  },
+  {
+    situation: "📍 팀원의 부탁",
+    text: "팀원이 개인 사정으로 도움을 요청했다.",
+    left:  { text: "일정을 조정해 최대한 배려해준다", type: "support" },
+    right: { text: "상황을 공유하고 함께 해결책을 찾는다", type: "vision" }
+  },
+  {
+    situation: "📍 마감이 촉박할 때",
+    text: "마감이 코앞인데 진행이 더디다. 어떻게 하나?",
+    left:  { text: "우선순위를 다시 정해 명확히 지시한다", type: "direct" },
+    right: { text: "체크리스트로 진행 상황을 점검한다", type: "system" }
+  }
+];
+
+/* ══════════════════════════════════════
+   6가지 리더십 유형
+══════════════════════════════════════ */
+const TYPES = {
+  coach: {
+    emoji: "🌱", name: "코칭형 리더", badge: "COACH",
+    quote: "함께 고민하고 변화를 이끄는 당신이 진정한 리더입니다.",
+    desc: "정답을 바로 주기보다 스스로 답을 찾도록 기다려주는 리더예요. 팀원의 성장을 최우선으로 생각하고, 실수해도 배움의 기회로 만들어줍니다. 당신 밑에서 일한 사람은 오래도록 성장해요.",
+    traits: ["경청", "인내심", "성장 지향", "질문의 힘", "자율성 존중"],
+    tip: "💡 가끔은 명확한 방향 제시도 필요해요. 팀원이 너무 헤맬 땐 살짝 힌트를 주세요!",
+    matchFollower: "energizer"
+  },
+  direct: {
+    emoji: "🚀", name: "추진형 리더", badge: "DIRECTOR",
+    quote: "빠른 실행과 명확한 방향이 팀을 움직입니다.",
+    desc: "결정이 빠르고 실행력이 강한 리더예요. 애매한 상황에서도 방향을 제시하고 팀을 앞으로 이끕니다. 위기 상황에서 특히 빛을 발하는 스타일이에요.",
+    traits: ["결단력", "실행력", "목표지향", "빠른 판단", "책임감"],
+    tip: "💡 가끔은 속도를 늦추고 팀원의 목소리에 귀 기울이는 시간도 필요해요!",
+    matchFollower: "doer"
+  },
+  support: {
+    emoji: "🤝", name: "지원형 리더", badge: "SUPPORTER",
+    quote: "우리는 서로를 배려하며 즐거운 업무분위기를 만듭니다.",
+    desc: "팀원 한 명 한 명을 세심하게 챙기는 리더예요. 부담을 나눠 지고, 작은 노력도 놓치지 않고 인정해줍니다. 당신과 일하는 사람들은 심리적으로 안전하다고 느껴요.",
+    traits: ["배려심", "세심함", "정서적 지지", "협업", "칭찬"],
+    tip: "💡 때로는 냉정한 피드백도 성장에 필요해요. 배려와 함께 명확함도 챙겨보세요!",
+    matchFollower: "supporter"
+  },
+  vision: {
+    emoji: "🔭", name: "비전형 리더", badge: "VISIONARY",
+    quote: "우리는 새로운 시도를 통해 해답을 찾아 갑니다.",
+    desc: "큰 그림을 그리고 팀에게 영감을 주는 리더예요. 디테일보다 방향과 가능성에 집중하며, 팀원들이 스스로 동기부여 되도록 이끕니다. 변화를 두려워하지 않아요.",
+    traits: ["통찰력", "영감", "혁신", "장기적 시야", "동기부여"],
+    tip: "💡 큰 그림만큼 실행 디테일도 중요해요. 구체적인 계획도 함께 챙겨보세요!",
+    matchFollower: "thinker"
+  },
+  empathy: {
+    emoji: "💬", name: "공감형 리더", badge: "EMPATH",
+    quote: "우리는 편견 없이 듣고, 두려움 없이 말합니다.",
+    desc: "팀원의 감정과 입장을 먼저 헤아리는 리더예요. 갈등 상황에서도 양쪽 이야기를 충분히 듣고, 모두가 존중받는다고 느끼게 만듭니다. 심리적 안전지대를 만드는 데 탁월해요.",
+    traits: ["공감능력", "경청", "중재력", "포용력", "신뢰 구축"],
+    tip: "💡 모두를 만족시키려다 결정이 늦어질 수 있어요. 때로는 명확한 결단도 필요해요!",
+    matchFollower: "challenger"
+  },
+  system: {
+    emoji: "⚙️", name: "시스템형 리더", badge: "SYSTEM",
+    quote: "우리는 작은 유혹 앞에서도 언제나 원칙을 선택합니다.",
+    desc: "명확한 기준과 체계로 팀을 이끄는 리더예요. 감정보다 원칙, 즉흥보다 계획을 중시합니다. 팀에 안정감과 신뢰를 주는 스타일로, 복잡한 프로젝트에서 빛을 발해요.",
+    traits: ["체계성", "원칙주의", "공정함", "계획력", "신뢰성"],
+    tip: "💡 원칙도 중요하지만 가끔은 유연함도 필요해요. 상황에 따라 예외를 고려해보세요!",
+    matchFollower: "loyal"
+  }
+};
+
+const FOLLOWER_INFO = {
+  doer:       { emoji: "🏃", name: "실행형 팔로워" },
+  thinker:    { emoji: "🧠", name: "분석형 팔로워" },
+  loyal:      { emoji: "🛡️", name: "신뢰형 팔로워" },
+  challenger: { emoji: "🔥", name: "도전형 팔로워" },
+  supporter:  { emoji: "🤲", name: "배려형 팔로워" },
+  energizer:  { emoji: "⚡", name: "활력형 팔로워" }
+};
+
+let currentQ = 0;
+let scores = { coach:0, direct:0, support:0, vision:0, empathy:0, system:0 };
+let startX = 0, currentX = 0, isDragging = false;
+
+function startQuiz() {
+  currentQ = 0;
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-swipe').style.display = 'block';
+  renderCard();
+}
+
+function renderCard() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  const pct = Math.round((currentQ / total) * 100);
+
+  document.getElementById('progress-text').textContent = `${currentQ + 1} / ${total}`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const stage = document.getElementById('card-stage');
+  stage.innerHTML = `
+    <div class="swipe-card" id="active-card">
+      <div class="stamp stamp-left" id="stamp-left">LEFT</div>
+      <div class="stamp stamp-right" id="stamp-right">RIGHT</div>
+      <div class="card-situation">${q.situation}</div>
+      <div class="card-text">${q.text}</div>
+      <div class="card-choices">
+        <div class="choice-half choice-left" onclick="chooseOption('left')">${q.left.text}</div>
+        <div class="choice-half choice-right" onclick="chooseOption('right')">${q.right.text}</div>
+      </div>
+    </div>`;
+
+  attachDragEvents();
+}
+
+function attachDragEvents() {
+  const card = document.getElementById('active-card');
+  if (!card) return;
+
+  card.addEventListener('mousedown', dragStart);
+  card.addEventListener('touchstart', dragStart, { passive: true });
+  document.addEventListener('mousemove', dragMove);
+  document.addEventListener('touchmove', dragMove, { passive: true });
+  document.addEventListener('mouseup', dragEnd);
+  document.addEventListener('touchend', dragEnd);
+
+  function dragStart(e) {
+    if (e.target.closest('.choice-half')) return; // 버튼 클릭은 드래그 제외
+    isDragging = true;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    card.classList.add('dragging');
+  }
+  function dragMove(e) {
+    if (!isDragging) return;
+    currentX = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+    const rotate = currentX * 0.06;
+    card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+
+    const leftStamp = document.getElementById('stamp-left');
+    const rightStamp = document.getElementById('stamp-right');
+    if (currentX < -20) {
+      leftStamp.style.opacity = Math.min(Math.abs(currentX) / 100, 1);
+      rightStamp.style.opacity = 0;
+    } else if (currentX > 20) {
+      rightStamp.style.opacity = Math.min(currentX / 100, 1);
+      leftStamp.style.opacity = 0;
+    } else {
+      leftStamp.style.opacity = 0;
+      rightStamp.style.opacity = 0;
+    }
+  }
+  function dragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    card.classList.remove('dragging');
+
+    if (currentX < -80) {
+      chooseOption('left');
+    } else if (currentX > 80) {
+      chooseOption('right');
+    } else {
+      card.style.transform = '';
+      document.getElementById('stamp-left').style.opacity = 0;
+      document.getElementById('stamp-right').style.opacity = 0;
+    }
+    currentX = 0;
+  }
+}
+
+function chooseOption(side) {
+  const q = QUESTIONS[currentQ];
+  const choice = side === 'left' ? q.left : q.right;
+  scores[choice.type] = (scores[choice.type] || 0) + 1;
+
+  const card = document.getElementById('active-card');
+  if (card) {
+    card.classList.add(side === 'left' ? 'exit-left' : 'exit-right');
+  }
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderCard();
+    } else {
+      showResult();
+    }
+  }, 280);
+}
+
+function showResult() {
+  document.getElementById('screen-swipe').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const maxScore = Math.max(...Object.values(scores));
+  const topTypes = Object.entries(scores).filter(([k,v]) => v === maxScore).map(([k]) => k);
+  const topType = topTypes[Math.floor(Math.random() * topTypes.length)];
+  const type = TYPES[topType];
+
+  document.getElementById('res-emoji').textContent = type.emoji;
+  document.getElementById('res-name').textContent = type.name;
+  document.getElementById('res-badge').textContent = type.badge;
+  document.getElementById('res-quote').textContent = '"' + type.quote + '"';
+  document.getElementById('res-desc').textContent = type.desc;
+  document.getElementById('res-traits').innerHTML = type.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('res-tip').textContent = type.tip;
+
+  const follower = FOLLOWER_INFO[type.matchFollower];
+  document.getElementById('res-match').innerHTML = `
+    <span class="match-emoji">${follower.emoji}</span>
+    <span class="match-text"><strong>${follower.name}</strong>과(와) 찰떡궁합! 함께 일하면 시너지가 폭발해요 🎯</span>`;
+}
+</script>
+</body>
+</html>
