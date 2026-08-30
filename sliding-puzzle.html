@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>문제해결 슬라이딩 퍼즐 | KEPCO CODE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0B2559;
+      --navy-mid: #1A3A7A;
+      --navy-light: #2B52A3;
+      --accent: #E8A400;
+      --white: #FFFFFF;
+      --gray-100: #F4F6FA;
+      --gray-200: #E2E8F0;
+      --gray-500: #64748B;
+      --gray-800: #1E293B;
+      --green: #22C55E;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+    nav {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 56px;
+    }
+    .nav-logo { color: var(--white); font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .nav-logo .badge { background: var(--accent); color: var(--navy); font-size: 0.65rem; font-weight: 900; padding: 2px 7px; border-radius: 20px; }
+    .nav-back { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; }
+
+    .wrapper { max-width: 480px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pop { 0%{transform:scale(0.85);opacity:0} 100%{transform:scale(1);opacity:1} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity:1; }
+      100% { transform: translateY(400px) rotate(720deg); opacity:0; }
+    }
+
+    /* INTRO */
+    #screen-intro { text-align:center; animation: fadeIn 0.5s ease; }
+    .intro-emoji { font-size:3.4rem; margin-bottom:14px; display:block; animation: float 3s ease-in-out infinite; }
+    .intro-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.68rem; font-weight:900; letter-spacing:0.1em; padding:4px 14px; border-radius:20px; margin-bottom:14px; }
+    .intro-title { font-size:clamp(1.4rem,5vw,1.9rem); font-weight:900; color:var(--navy); line-height:1.3; margin-bottom:10px; }
+    .intro-title span { color:var(--accent); }
+    .intro-desc { font-size:0.88rem; color:var(--gray-500); line-height:1.8; margin-bottom:22px; }
+
+    .intro-preview {
+      width: 200px; margin: 0 auto 22px; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 8px 28px rgba(11,37,89,0.18); border: 3px solid var(--white);
+    }
+    .intro-preview img { width: 100%; display: block; }
+
+    .diff-select { display:flex; gap:8px; justify-content:center; margin-bottom:22px; flex-wrap:wrap; }
+    .diff-btn {
+      border:2px solid var(--gray-200); background:var(--white); color:var(--gray-500);
+      font-size:0.82rem; font-weight:700; padding:9px 18px; border-radius:20px;
+      cursor:pointer; font-family:inherit; transition:all 0.2s;
+    }
+    .diff-btn:hover { border-color:var(--navy-light); }
+    .diff-btn.active { border-color:var(--navy); background:var(--navy); color:var(--white); }
+
+    .btn-start {
+      background:var(--navy); color:var(--white);
+      font-size:1rem; font-weight:700; padding:16px 44px; border-radius:50px;
+      border:none; cursor:pointer; font-family:inherit;
+      box-shadow:0 4px 20px rgba(11,37,89,0.25);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-start:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(11,37,89,0.3); }
+
+    /* GAME */
+    #screen-game { display:none; }
+    .game-hud {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:16px; padding: 0 2px;
+    }
+    .hud-item { text-align:center; }
+    .hud-val { font-size:1.3rem; font-weight:900; color:var(--navy); display:block; }
+    .hud-lbl { font-size:0.68rem; color:var(--gray-500); }
+
+    .puzzle-board {
+      position: relative; width: 100%; aspect-ratio: 1/1;
+      background: var(--navy); border-radius: 16px; padding: 6px;
+      box-shadow: 0 8px 32px rgba(11,37,89,0.18); margin-bottom: 20px;
+      display: grid; gap: 4px;
+    }
+    .puzzle-tile {
+      position: relative; border-radius: 8px; overflow: hidden;
+      cursor: pointer; background-size: cover;
+      transition: transform 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .puzzle-tile:active { transform: scale(0.96); }
+    .puzzle-tile.empty { background: transparent; box-shadow: none; cursor: default; }
+    .puzzle-tile .tile-num {
+      position: absolute; top: 3px; left: 5px;
+      background: rgba(11,37,89,0.75); color: var(--white);
+      font-size: 0.65rem; font-weight: 700; padding: 1px 5px; border-radius: 6px;
+    }
+
+    .hint-preview {
+      display: flex; align-items: center; gap: 10px; justify-content: center;
+      background: var(--white); border-radius: 12px; padding: 10px 14px;
+      margin-bottom: 16px; box-shadow: 0 2px 10px rgba(11,37,89,0.06);
+    }
+    .hint-preview img { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; }
+    .hint-preview span { font-size: 0.78rem; color: var(--gray-500); font-weight: 600; }
+
+    .game-actions { display:flex; gap:10px; }
+    .btn-reset {
+      flex:1; background:var(--white); color:var(--navy); border:2px solid var(--gray-200);
+      border-radius:14px; padding:12px; font-size:0.85rem; font-weight:700;
+      cursor:pointer; font-family:inherit;
+    }
+    .btn-reset:hover { border-color:var(--navy-light); }
+
+    /* RESULT */
+    #screen-result { display:none; text-align:center; animation: fadeIn 0.5s ease; }
+    .result-icon { font-size:3.6rem; margin-bottom:12px; display:block; animation:pop 0.5s ease; }
+    .result-grade { font-size:1.5rem; font-weight:900; color:var(--navy); margin-bottom:20px; }
+    .result-preview {
+      width: 220px; margin: 0 auto 20px; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 8px 28px rgba(11,37,89,0.18); border: 3px solid var(--accent);
+    }
+    .result-preview img { width: 100%; display: block; }
+    .result-card { background:var(--white); border-radius:18px; padding:22px; margin-bottom:24px; }
+    .result-stats { display:flex; gap:10px; }
+    .rstat { flex:1; background:var(--gray-100); border-radius:10px; padding:12px; text-align:center; }
+    .rstat-val { font-size:1.2rem; font-weight:900; color:var(--navy); display:block; }
+    .rstat-lbl { font-size:0.65rem; color:var(--gray-500); }
+    .result-msg { font-size:0.88rem; color:var(--gray-500); line-height:1.8; margin-bottom:26px; }
+    .result-actions { display:flex; gap:12px; }
+    .btn-retry { flex:1; background:var(--white); color:var(--navy); border:2px solid var(--navy); border-radius:50px; padding:13px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-home { flex:1; background:var(--navy); color:var(--white); border:none; border-radius:50px; padding:13px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+
+    .confetti { position: fixed; top: 0; width: 8px; height: 8px; z-index: 998; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">KEPCO CODE <span class="badge">'26</span></a>
+  <a class="nav-back" href="index.html">← 홈으로</a>
+</nav>
+
+<div class="wrapper">
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <span class="intro-emoji">🧩</span>
+    <div class="intro-tag">9월 참여 활동 · 문제해결</div>
+    <h1 class="intro-title">문제해결 <span>슬라이딩 퍼즐</span></h1>
+    <p class="intro-desc">조각난 이미지를 순서대로 맞춰보세요!<br>문제해결은 결국, 흩어진 조각을 다시 맞추는 힘이니까요.</p>
+
+    <div class="intro-preview">
+      <img src="images/puzzle-kepco.png" alt="퍼즐 미리보기"/>
+    </div>
+
+    <div class="diff-select" id="diff-select">
+      <button class="diff-btn" data-size="3">쉬움 (3×3)</button>
+      <button class="diff-btn active" data-size="4">보통 (4×4)</button>
+      <button class="diff-btn" data-size="5">어려움 (5×5)</button>
+    </div>
+
+    <button class="btn-start" onclick="startGame()">퍼즐 시작 →</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="screen-game">
+    <div class="game-hud">
+      <div class="hud-item">
+        <span class="hud-val" id="hud-moves">0</span>
+        <span class="hud-lbl">이동 횟수</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-val" id="hud-time">00:00</span>
+        <span class="hud-lbl">경과 시간</span>
+      </div>
+    </div>
+
+    <div class="hint-preview">
+      <img src="images/puzzle-kepco.png" alt="힌트"/>
+      <span>완성된 모습이에요. 참고하며 맞춰보세요!</span>
+    </div>
+
+    <div class="puzzle-board" id="puzzle-board"></div>
+
+    <div class="game-actions">
+      <button class="btn-reset" onclick="shuffleBoard()">🔀 다시 섞기</button>
+      <button class="btn-reset" onclick="backToIntro()">🏠 난이도 변경</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <span class="result-icon">🎉</span>
+    <div class="result-grade" id="result-grade"></div>
+    <div class="result-preview">
+      <img src="images/puzzle-kepco.png" alt="완성"/>
+    </div>
+    <div class="result-card">
+      <div class="result-stats">
+        <div class="rstat"><span class="rstat-val" id="rs-moves">0</span><span class="rstat-lbl">이동 횟수</span></div>
+        <div class="rstat"><span class="rstat-val" id="rs-time">0초</span><span class="rstat-lbl">완성 시간</span></div>
+      </div>
+    </div>
+    <p class="result-msg" id="result-msg"></p>
+    <div class="result-actions">
+      <button class="btn-retry" onclick="startGame()">🔄 다시하기</button>
+      <a class="btn-home" href="index.html">🏠 홈으로</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let SIZE = 4;
+let board = [];
+let emptyPos = { row: 0, col: 0 };
+let moves = 0;
+let timer = null;
+let seconds = 0;
+let gameStarted = false;
+
+// 난이도 선택
+document.getElementById('diff-select').addEventListener('click', (e) => {
+  const btn = e.target.closest('.diff-btn');
+  if (!btn) return;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  SIZE = parseInt(btn.dataset.size);
+});
+
+function startGame() {
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-game').style.display = 'block';
+
+  initBoard();
+  shuffleBoard();
+}
+
+function backToIntro() {
+  clearInterval(timer);
+  document.getElementById('screen-game').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'block';
+}
+
+function initBoard() {
+  board = [];
+  for (let r = 0; r < SIZE; r++) {
+    const row = [];
+    for (let c = 0; c < SIZE; c++) {
+      row.push(r * SIZE + c + 1);
+    }
+    board.push(row);
+  }
+  board[SIZE-1][SIZE-1] = 0; // 빈칸
+  emptyPos = { row: SIZE-1, col: SIZE-1 };
+}
+
+function shuffleBoard() {
+  initBoard();
+  // 유효한 이동을 랜덤하게 많이 수행해서 셔플 (항상 풀 수 있는 상태 보장)
+  const shuffleMoves = SIZE * SIZE * 40;
+  for (let i = 0; i < shuffleMoves; i++) {
+    const neighbors = getNeighbors(emptyPos.row, emptyPos.col);
+    const rand = neighbors[Math.floor(Math.random() * neighbors.length)];
+    swapTiles(rand.row, rand.col);
+  }
+  moves = 0;
+  seconds = 0;
+  gameStarted = true;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    seconds++;
+    updateHUD();
+  }, 1000);
+  renderBoard();
+  updateHUD();
+}
+
+function getNeighbors(row, col) {
+  const result = [];
+  if (row > 0) result.push({ row: row-1, col });
+  if (row < SIZE-1) result.push({ row: row+1, col });
+  if (col > 0) result.push({ row, col: col-1 });
+  if (col < SIZE-1) result.push({ row, col: col+1 });
+  return result;
+}
+
+function swapTiles(row, col) {
+  board[emptyPos.row][emptyPos.col] = board[row][col];
+  board[row][col] = 0;
+  emptyPos = { row, col };
+}
+
+function isAdjacent(row, col) {
+  const dr = Math.abs(row - emptyPos.row);
+  const dc = Math.abs(col - emptyPos.col);
+  return (dr + dc) === 1;
+}
+
+function renderBoard() {
+  const boardEl = document.getElementById('puzzle-board');
+  boardEl.style.gridTemplateColumns = `repeat(${SIZE}, 1fr)`;
+  boardEl.style.gridTemplateRows = `repeat(${SIZE}, 1fr)`;
+  boardEl.innerHTML = '';
+
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const val = board[r][c];
+      const tile = document.createElement('div');
+
+      if (val === 0) {
+        tile.className = 'puzzle-tile empty';
+      } else {
+        tile.className = 'puzzle-tile';
+        // val은 1~SIZE*SIZE-1, 원래 위치 계산
+        const origRow = Math.floor((val-1) / SIZE);
+        const origCol = (val-1) % SIZE;
+        const bgPosX = (origCol / (SIZE-1)) * 100;
+        const bgPosY = (origRow / (SIZE-1)) * 100;
+        tile.style.backgroundImage = `url('images/puzzle-kepco.png')`;
+        tile.style.backgroundSize = `${SIZE * 100}% ${SIZE * 100}%`;
+        tile.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+
+        const numEl = document.createElement('span');
+        numEl.className = 'tile-num';
+        numEl.textContent = val;
+        tile.appendChild(numEl);
+
+        tile.addEventListener('click', () => handleTileClick(r, c));
+      }
+      boardEl.appendChild(tile);
+    }
+  }
+}
+
+function handleTileClick(row, col) {
+  if (!isAdjacent(row, col)) return;
+  swapTiles(row, col);
+  moves++;
+  renderBoard();
+  updateHUD();
+
+  if (checkWin()) {
+    clearInterval(timer);
+    setTimeout(() => showResult(), 400);
+  }
+}
+
+function checkWin() {
+  let expected = 1;
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (r === SIZE-1 && c === SIZE-1) {
+        if (board[r][c] !== 0) return false;
+      } else {
+        if (board[r][c] !== expected) return false;
+        expected++;
+      }
+    }
+  }
+  return true;
+}
+
+function updateHUD() {
+  document.getElementById('hud-moves').textContent = moves;
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  document.getElementById('hud-time').textContent = `${m}:${s}`;
+}
+
+function showResult() {
+  document.getElementById('screen-game').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  const timeStr = m > 0 ? `${m}분 ${s}초` : `${s}초`;
+
+  document.getElementById('rs-moves').textContent = moves + '회';
+  document.getElementById('rs-time').textContent = timeStr;
+
+  let grade, msg;
+  const efficiency = moves / (SIZE * SIZE);
+  if (efficiency <= 4)      { grade = '🏆 문제해결 마스터!'; msg = '놀라운 효율이에요! 최소한의 움직임으로 문제를 풀어내는 당신, 진정한 해결사입니다.'; }
+  else if (efficiency <= 8) { grade = '🥇 뛰어난 해결사!'; msg = '훌륭해요! 차근차근 문제를 풀어가는 능력이 돋보여요.'; }
+  else                       { grade = '🎯 끈기의 해결사!'; msg = '포기하지 않고 끝까지 완성했네요! 문제해결은 속도보다 끈기가 중요하죠.'; }
+
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-msg').textContent = msg;
+
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#E8A400', '#0B2559', '#2B52A3', '#FFD700'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.animation = `confetti-fall ${1.2 + Math.random()}s ease-in forwards`;
+    c.style.animationDelay = (Math.random() * 0.3) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2000);
+  }
+}
+</script>
+</body>
+</html>
