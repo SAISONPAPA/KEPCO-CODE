@@ -194,6 +194,11 @@
       margin-bottom: 24px; text-align: center;
     }
     .leadership-list-wrap { margin-top: 8px; }
+    .leadership-closed-notice {
+      background: var(--white); border: 2px dashed var(--gray-200); border-radius: 14px;
+      padding: 16px 18px; font-size: 0.86rem; color: var(--gray-500);
+      text-align: center; margin-bottom: 28px; font-weight: 600;
+    }
     .leadership-list-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
     .leadership-list { display: flex; flex-direction: column; gap: 10px; }
     .leadership-item {
@@ -581,31 +586,14 @@
   <!-- 리더십 한마디 (8월 활동) -->
   <div id="leadership-section" class="section" style="background:var(--gray-100); display:none;">
     <div class="section-inner">
-      <p class="section-label">8월 참여 활동</p>
+      <p class="section-label">8월 참여 활동 · 마감</p>
       <h2 class="section-title">나의 리더십 한마디</h2>
       <div class="divider"></div>
-      <p class="section-desc" style="margin-bottom:28px;">"내가 생각하는 리더십이란 ___이다" — 익명으로 한 줄만 남겨주세요!</p>
+      <p class="section-desc" style="margin-bottom:28px;">"내가 생각하는 리더십이란 ___이다" — 8월 한 달간 함께 남겨주신 소중한 한마디들이에요.</p>
 
-      <!-- 입력창 -->
-      <div class="leadership-input-wrap">
-        <div class="leadership-input-box">
-          <span class="leadership-prefix">리더십이란</span>
-          <input type="text" id="leadership-input" class="leadership-input"
-            placeholder="한 줄로 완성해보세요..." maxlength="50"/>
-          <span class="leadership-suffix">이다.</span>
-        </div>
-        <button class="leadership-submit" onclick="submitLeadership()">남기기 →</button>
-        <div class="leadership-char-count"><span id="char-count">0</span> / 50</div>
-      </div>
-
-      <!-- 제출 메시지 -->
-      <div id="leadership-success" style="display:none;" class="leadership-success">
-        ✅ 소중한 한마디가 등록됐어요!
-      </div>
-
-      <!-- Firebase 연동 완료: 평상시 숨김 처리 -->
-      <div id="firebase-notice" class="firebase-notice" style="display:none;">
-        🔧 현재 준비 중입니다. 곧 참여하실 수 있어요!
+      <!-- 참여 마감 안내 (입력창 대체) -->
+      <div class="leadership-closed-notice">
+        🔒 8월 참여 기간이 마감되었어요. 남겨주신 이야기는 아래에서 계속 볼 수 있습니다!
       </div>
 
       <!-- 한마디 목록 -->
@@ -614,6 +602,24 @@
         <div id="leadership-list" class="leadership-list">
           <div class="leadership-empty">아직 등록된 한마디가 없어요. 첫 번째로 남겨보세요!</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 문제해결 스타일 테스트 (9월 활동) -->
+  <div id="problem-solving-section" class="section" style="background:var(--white); display:none;">
+    <div class="section-inner">
+      <p class="section-label">9월 참여 활동</p>
+      <h2 class="section-title">나의 문제해결 스타일은?</h2>
+      <div class="divider"></div>
+      <p class="section-desc" style="margin-bottom:24px;">10문항으로 알아보는 나의 문제해결 유형! 6가지 스타일 중 나는 어떤 해결사일까요?</p>
+      <div class="swipe-test-cards">
+        <a class="swipe-test-card" href="problem-solving-quiz.html">
+          <span class="stc-emoji">🧩</span>
+          <div class="stc-title">나의 문제해결 스타일은?</div>
+          <div class="stc-desc">10문항 · 6가지 해결사 유형</div>
+          <span class="stc-arrow">시작하기 →</span>
+        </a>
       </div>
     </div>
   </div>
@@ -712,32 +718,32 @@
    ★★★ 매달 여기만 수정하세요! ★★★
    ================================================================ */
 
-const CURRENT_MONTH = 8;
+const CURRENT_MONTH = 9;
 
 const THIS_MONTH = {
-  label: "2026년 8월",
-  month: 8,
+  label: "2026년 9월",
+  month: 9,
   codes: [
     {
-      number: "CODE 10",
-      name: "안전문화",
-      slogan: "우리는 동료의 작은 위험도\n놓치지 않고 먼저 살핍니다.",
+      number: "CODE 04",
+      name: "문제해결",
+      slogan: "우리는 새로운 시도를 통해\n해답을 찾아 갑니다.",
       guides: [
-        "규정된 안전장구는 예외 없이 착용하고 동료의 착용 상태도 함께 체크하기",
-        "현장업무 시 잠재적 위험요소를 확인하고 동료에게 공유, 즉시 조치하기",
-        "사고로 이어질 뻔한 아차사고 사례도 발견 즉시 보고하여 재발 방지하기",
-        "안전 수칙을 단순히 지키는 것을 넘어 동료에게 먼저 알려주는 습관 갖기"
+        "\"원래 이렇게 해왔으니까…\" 라는 말 대신 데이터와 근거 기반으로 업무 재검토 해보기",
+        "기존 업무방식 중 개선점을 메모하는 습관 및 소통ON 등 다양한 업무 제안 시스템 활용하기",
+        "자유로운 브레인스토밍 회의문화로 새로운 아이디어 발굴을 활성화하기",
+        "황당하지만 일리있는 아이디어도 편하게 나눠보는 분위기 만들기"
       ]
     },
     {
-      number: "CODE 03",
-      name: "리더십",
-      slogan: "함께 고민하고 변화를 이끄는\n당신이 진정한 리더입니다.",
+      number: "CODE 06",
+      name: "감사·긍정",
+      slogan: "우리는 칭찬과 감사의 표현\n속에서 더욱 성장합니다.",
       guides: [
-        "부서원의 아이디어가 생각과 달라도 우선 '한번 해봅시다'라고 함께 시도해보기",
-        "내가 먼저 솔선수범해야 할 행동 한 가지를 공개적으로 정하고 한 달간 꾸준히 실천하기",
-        "부서원 개개인의 강점을 발견해보고, 그에 맞는 칭찬과 역할을 맡겨보기",
-        "직급 무관하게 팀원의 의견을 끝까지 듣고 결정에 반영하는 습관 갖기"
+        "모든 것은 타이밍, 협업에 대한 칭찬과 감사 표현은 가능한 구체적으로 즉시 하기",
+        "하루에 한 번, 동료에게 \"덕분에 잘 처리했어요\"를 구체적인 이유와 함께 전하기",
+        "매월 11일 기업문화포털을 활용하여 평소 고마운 동료에게 감사메시지 전해보기",
+        "여름휴가중 나의 업무를 대신 해준 동료에게 감사 메시지 발송해보기"
       ]
     }
   ]
@@ -745,6 +751,34 @@ const THIS_MONTH = {
 
 /* ★ 지난달 내역 — 매달 현재를 여기로 옮기세요 ★ */
 const PAST_MONTHS = [
+  {
+    label: "2026년 8월",
+    month: 8,
+    codes: [
+      {
+        number: "CODE 10",
+        name: "안전문화",
+        slogan: "우리는 동료의 작은 위험도\n놓치지 않고 먼저 살핍니다.",
+        guides: [
+          "규정된 안전장구는 예외 없이 착용하고 동료의 착용 상태도 함께 체크하기",
+          "현장업무 시 잠재적 위험요소를 확인하고 동료에게 공유, 즉시 조치하기",
+          "사고로 이어질 뻔한 아차사고 사례도 발견 즉시 보고하여 재발 방지하기",
+          "안전 수칙을 단순히 지키는 것을 넘어 동료에게 먼저 알려주는 습관 갖기"
+        ]
+      },
+      {
+        number: "CODE 03",
+        name: "리더십",
+        slogan: "함께 고민하고 변화를 이끄는\n당신이 진정한 리더입니다.",
+        guides: [
+          "부서원의 아이디어가 생각과 달라도 우선 '한번 해봅시다'라고 함께 시도해보기",
+          "내가 먼저 솔선수범해야 할 행동 한 가지를 공개적으로 정하고 한 달간 꾸준히 실천하기",
+          "부서원 개개인의 강점을 발견해보고, 그에 맞는 칭찬과 역할을 맡겨보기",
+          "직급 무관하게 팀원의 의견을 끝까지 듣고 결정에 반영하는 습관 갖기"
+        ]
+      }
+    ]
+  },
   {
     label: "2026년 7월",
     month: 7,
@@ -1065,6 +1099,11 @@ function renderMonthCards(monthData) {
   if (swipeTestSection) {
     swipeTestSection.style.display = monthData.month === 8 ? 'block' : 'none';
   }
+  // 9월에만 문제해결 스타일 테스트 섹션 표시
+  const problemSolvingSection = document.getElementById('problem-solving-section');
+  if (problemSolvingSection) {
+    problemSolvingSection.style.display = monthData.month === 9 ? 'block' : 'none';
+  }
 }
 
 allMonths.forEach((monthData, i) => {
@@ -1190,6 +1229,52 @@ const NOVEL_LIST = [
 💡 오늘의 교훈
 '위험 요소 챌린지'는 누군가를 지적하는 게 아니라, 우리 동료와 내 일터를 내 손으로 더 안전하게 만드는 가장 유쾌한 방법이었다.
 (다음엔 꼭 1등 해서 상품 받아야지.)`,
+    images: []
+  },
+  {
+    ep: "EP.03",
+    title: "'덕분에'라는 네 글자가 가진 위험성 (feat. 오글거림 주의)",
+    code: "감사·긍정",
+    date: "2026년 9월",
+    content: `9월의 KEPCO CODE는 '감사·긍정'.
+사내 포털에는 '동료에게 감사한 일이 있을 때마다 꽃 모양 포스트잇에 적어 붙이기', '하루에 한 번 동료에게 덕분에 잘 처리했어요 전하기' 같은 가이드가 대문짝만하게 걸렸다.
+
+처음 공지를 봤을 때, INTP인 나 김 대리는 진심으로 속으로 외쳤다.
+'아니, 남사스럽게 회사에서 무슨 낯간지러운 감사야? 속으로만 고마워하면 되지!'
+
+하지만 세상일은 뜻대로 흘러가지 않는 법. 팀장님이 회의 도중 은근 눈치를 주셨다.
+"우리 부서도 이번 캠페인에 적극적으로 동참해야지? 자, 오늘부터 하루에 한 번씩 동료에게 고마운 점 찾아서 표현하기다!"
+
+발등에 불이 떨어졌다. 상사 지시인데 안 할 수도 없고, 평소에 "감사합니다"를 목에 칼이 들어와도 잘 안 하는 내게 이건 거의 극기 훈련이었다.
+
+오후 3시, 마침내 위기가 찾아왔다.
+보고서 마감은 30분 남았는데, 엑셀 함수가 갑자기 꼬이면서 숫자가 사정없이 틀어지기 식은땀이 줄줄 흐르기 시작했다. 머릿속이 하얘져서 모니터만 멍하니 뚫어져라 보고 있는데, 옆자리에 앉은 박 과장님이 슥 다가오더니 내 화면을 힐끗 보곤 툭 던졌다.
+
+"김 대리, 거기 쉼표 하나 잘못 찍혔네. 그거 지우면 바로 풀려."
+
+정말 거짓말처럼 오류가 싹 사라졌다. 구세주가 따로 없었다.
+평소 같았으면 "아, 감사합니다~" 하고 쿨하게 끝냈겠지만, 오늘은 내 머릿속에 사내 가이드라인이 번쩍 스쳐 지나갔다.
+
+'지금이야... 여기서 이 타이밍에 안 하면 오늘 내로 숙제 못 끝낸다.'
+
+나는 침을 꼴깍 삼키고, 최대한 덜 오글거리는 표정을 지으며 박 과장님을 불렀다.
+"저... 과장님. 덕분에 진짜 큰일 날 뻔했습니다. 과장님 아니었으면 저 오늘 야근 확정이었어요. 정말... 고맙습니다."
+
+내 목소리가 너무 진지했던 걸까? 박 과장님이 마시던 커피를 뿜을 뻔하며 나를 빤히 쳐다봤다.
+"와, 김 대리 소름 돋았어. 갑자기 왜 이래? 뭐 잘못한 거 있어?"
+
+사무실에 있던 다른 팀원들도 빵 터졌다. 얼굴이 순식간에 홍당무처럼 달아올랐다.
+'아오, 역시 이런 간지러운 짓은 나랑 안 맞는다니까!' 하고 이불을 차고 싶어질 즈음, 박 과장이 씨익 웃으며 내 어깨를 툭 쳤다.
+
+"근데 듣기 나쁘지 않네? 야, 고마우면 내일 아메리카노는 김 대리가 쏴라."
+"아, 당연하죠!"
+
+퇴근길, 이상하게 가슴 한켠이 훈훈해졌다.
+오글거린다고 피하기만 했던 "고맙다"는 말 한마디가, 삭막했던 사무실 공기를 순식간에 부드럽게 바꿔놓았던 것이다.
+
+💡 오늘의 교훈
+'감사'는 낯간지러운 영혼 없는 인사말이 아니라, 삭막한 오피스 라이프를 버티게 해주는 치트키였다.
+(물론 내일 아메리카노 값은 좀 아깝지만 말이다.)`,
     images: []
   }
 ];
