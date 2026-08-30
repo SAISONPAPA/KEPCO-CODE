@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>나의 문제해결 스타일은? | KEPCO CODE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0B2559;
+      --navy-mid: #1A3A7A;
+      --navy-light: #2B52A3;
+      --accent: #E8A400;
+      --white: #FFFFFF;
+      --gray-100: #F4F6FA;
+      --gray-200: #E2E8F0;
+      --gray-500: #64748B;
+      --gray-800: #1E293B;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+    nav {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 56px;
+    }
+    .nav-logo { color: var(--white); font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .nav-logo .badge { background: var(--accent); color: var(--navy); font-size: 0.65rem; font-weight: 900; padding: 2px 7px; border-radius: 20px; }
+    .nav-back { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; }
+
+    .wrapper { max-width: 520px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pop { 0%{transform:scale(0.85);opacity:0} 100%{transform:scale(1);opacity:1} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* INTRO */
+    #screen-intro { text-align:center; animation: fadeIn 0.5s ease; }
+    .intro-emoji { font-size:3.6rem; margin-bottom:16px; display:block; animation: float 3s ease-in-out infinite; }
+    .intro-tag { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.7rem; font-weight:900; letter-spacing:0.1em; padding:4px 14px; border-radius:20px; margin-bottom:14px; }
+    .intro-title { font-size:clamp(1.5rem,5vw,2.1rem); font-weight:900; color:var(--navy); line-height:1.3; margin-bottom:10px; }
+    .intro-title span { color:var(--accent); }
+    .intro-desc { font-size:0.9rem; color:var(--gray-500); line-height:1.8; margin-bottom:24px; }
+    .intro-meta { display:flex; justify-content:center; gap:12px; margin-bottom:26px; flex-wrap:wrap; }
+    .meta-box { background:var(--white); border-radius:12px; padding:12px 18px; }
+    .meta-val { font-size:1.2rem; font-weight:900; color:var(--navy); display:block; }
+    .meta-lbl { font-size:0.68rem; color:var(--gray-500); }
+    .btn-start {
+      background:var(--navy); color:var(--white);
+      font-size:1rem; font-weight:700; padding:16px 44px; border-radius:50px;
+      border:none; cursor:pointer; font-family:inherit;
+      box-shadow:0 4px 20px rgba(11,37,89,0.25);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-start:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(11,37,89,0.3); }
+
+    /* QUIZ */
+    #screen-quiz { display:none; }
+    .progress-wrap { margin-bottom:24px; }
+    .progress-label { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--gray-500); margin-bottom:8px; }
+    .progress-bar { height:5px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--navy),var(--navy-light)); border-radius:3px; transition:width 0.4s ease; }
+
+    .q-card {
+      background:var(--white); border-radius:20px; padding:28px 24px;
+      box-shadow:0 4px 24px rgba(11,37,89,0.1); margin-bottom:18px;
+      animation: slideUp 0.35s ease;
+    }
+    .q-situation {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--gray-100); border-radius:20px;
+      padding:6px 14px; font-size:0.78rem; color:var(--gray-500);
+      margin-bottom:16px;
+    }
+    .q-text { font-size:1.08rem; font-weight:700; color:var(--navy); line-height:1.6; }
+
+    .options { display:flex; flex-direction:column; gap:10px; }
+    .opt-btn {
+      background:var(--white); border:2px solid var(--gray-200);
+      border-radius:14px; padding:15px 18px;
+      font-size:0.9rem; font-weight:500; color:var(--gray-800);
+      text-align:left; cursor:pointer; font-family:inherit;
+      transition:all 0.18s; line-height:1.55;
+      display:flex; align-items:flex-start; gap:10px;
+    }
+    .opt-btn:hover:not(:disabled) { border-color:var(--navy-light); background:var(--gray-100); transform:translateX(3px); }
+    .opt-btn:disabled { cursor:default; opacity:0.5; }
+    .opt-btn.selected { border-color:var(--navy); background:var(--navy); color:var(--white); opacity:1; }
+    .opt-num {
+      flex-shrink:0; width:22px; height:22px; border-radius:50%;
+      background:var(--gray-100); color:var(--gray-500);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.72rem; font-weight:700;
+    }
+    .opt-btn.selected .opt-num { background:var(--accent); color:var(--navy); }
+
+    /* RESULT */
+    #screen-result { display:none; animation: fadeIn 0.5s ease; }
+    .result-card {
+      background:var(--white); border-radius:24px; overflow:hidden;
+      box-shadow:0 8px 40px rgba(11,37,89,0.12); margin-bottom:24px;
+    }
+    .result-header {
+      background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+      padding:40px 28px 30px; text-align:center; color:var(--white);
+    }
+    .result-emoji { font-size:4rem; display:block; margin-bottom:14px; animation:pop 0.5s ease; }
+    .result-label { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; color:var(--accent); margin-bottom:8px; }
+    .result-name { font-size:1.6rem; font-weight:900; margin-bottom:6px; }
+    .result-badge { display:inline-block; background:var(--accent); color:var(--navy); font-size:0.72rem; font-weight:900; padding:4px 14px; border-radius:20px; }
+    .result-body { padding:26px 28px; }
+    .result-quote {
+      font-size:0.95rem; font-weight:700; color:var(--navy);
+      background:var(--gray-100); border-left:4px solid var(--accent);
+      padding:14px 18px; border-radius:0 10px 10px 0; margin-bottom:18px; line-height:1.6;
+    }
+    .result-desc { font-size:0.9rem; color:var(--gray-500); line-height:1.85; margin-bottom:22px; }
+    .result-traits h4 { font-size:0.78rem; font-weight:700; color:var(--navy-light); letter-spacing:0.08em; margin-bottom:12px; }
+    .trait-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+    .trait-tag { background:var(--gray-100); color:var(--navy); font-size:0.78rem; font-weight:600; padding:5px 12px; border-radius:20px; border:1px solid var(--gray-200); }
+    .result-tip {
+      background:#FFFBF0; border:1px solid #FDE68A; border-radius:12px;
+      padding:14px 16px; font-size:0.85rem; color:#92400E; line-height:1.7;
+    }
+    .result-actions { display:flex; gap:12px; }
+    .btn-retry { flex:1; background:var(--white); color:var(--navy); border:2px solid var(--navy); border-radius:50px; padding:13px 20px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn-home { flex:1; background:var(--navy); color:var(--white); border:none; border-radius:50px; padding:13px 20px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">KEPCO CODE <span class="badge">'26</span></a>
+  <a class="nav-back" href="index.html">← 홈으로</a>
+</nav>
+
+<div class="wrapper">
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <span class="intro-emoji">🧩</span>
+    <div class="intro-tag">9월 참여 활동 · 문제해결</div>
+    <h1 class="intro-title">나의 <span>문제해결</span><br>스타일은?</h1>
+    <p class="intro-desc">업무 중 마주하는 다양한 상황들,<br>당신은 어떻게 해결하나요?</p>
+    <div class="intro-meta">
+      <div class="meta-box"><span class="meta-val">10</span><span class="meta-lbl">문항</span></div>
+      <div class="meta-box"><span class="meta-val">6</span><span class="meta-lbl">유형</span></div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">시작하기 →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-text">1 / 10</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-card" id="q-card">
+      <div class="q-situation" id="q-situation"></div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="options" id="options-container"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="result-emoji" id="res-emoji"></span>
+        <div class="result-label">나의 문제해결 스타일</div>
+        <div class="result-name" id="res-name"></div>
+        <div class="result-badge" id="res-badge"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-quote" id="res-quote"></div>
+        <div class="result-desc" id="res-desc"></div>
+        <div class="result-traits">
+          <h4>✨ 나의 문제해결 키워드</h4>
+          <div class="trait-list" id="res-traits"></div>
+        </div>
+        <div class="result-tip" id="res-tip"></div>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-retry" onclick="startQuiz()">🔄 다시하기</button>
+      <a class="btn-home" href="index.html">🏠 홈으로</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   10문항 × 4지선다
+   각 선택지는 문제해결 유형에 점수 부여
+   유형: analytic(분석형) creative(발상형) fast(속전속결형)
+         collab(협업형) cautious(신중형) root(근본해결형)
+══════════════════════════════════════ */
+const QUESTIONS = [
+  {
+    situation: "📍 갑작스런 시스템 오류",
+    text: "업무 시스템이 갑자기 멈췄다. 가장 먼저 하는 행동은?",
+    options: [
+      { text: "오류 로그부터 차근차근 확인한다", type: "analytic" },
+      { text: "일단 재부팅부터 해본다", type: "fast" },
+      { text: "동료들에게 같은 문제 있는지 물어본다", type: "collab" },
+      { text: "이런 문제가 왜 반복되는지부터 생각한다", type: "root" }
+    ]
+  },
+  {
+    situation: "📍 새로운 업무 방식 제안",
+    text: "기존 업무 프로세스가 비효율적이라고 느꼈다.",
+    options: [
+      { text: "데이터로 문제점을 먼저 정리해본다", type: "analytic" },
+      { text: "완전히 새로운 방식을 상상해본다", type: "creative" },
+      { text: "동료들 의견을 먼저 모아본다", type: "collab" },
+      { text: "왜 이렇게 굳어졌는지 원인을 파악한다", type: "root" }
+    ]
+  },
+  {
+    situation: "📍 마감이 촉박한 상황",
+    text: "마감이 얼마 안 남았는데 문제가 생겼다.",
+    options: [
+      { text: "일단 되는 방법부터 빠르게 실행한다", type: "fast" },
+      { text: "리스크를 점검하고 신중하게 접근한다", type: "cautious" },
+      { text: "팀원들과 역할을 나눠 동시에 처리한다", type: "collab" },
+      { text: "임시방편 대신 근본 원인부터 짚는다", type: "root" }
+    ]
+  },
+  {
+    situation: "📍 아이디어 회의",
+    text: "새 프로젝트 아이디어 회의, 당신의 접근은?",
+    options: [
+      { text: "기존 사례와 데이터를 조사해본다", type: "analytic" },
+      { text: "엉뚱해도 일단 다양하게 던져본다", type: "creative" },
+      { text: "실현 가능성부터 꼼꼼히 따져본다", type: "cautious" },
+      { text: "다른 사람 생각을 들으며 발전시킨다", type: "collab" }
+    ]
+  },
+  {
+    situation: "📍 반복되는 실수",
+    text: "같은 실수가 팀에서 반복되고 있다.",
+    options: [
+      { text: "왜 반복되는지 근본 원인을 찾는다", type: "root" },
+      { text: "체크리스트를 만들어 신중히 관리한다", type: "cautious" },
+      { text: "관련 데이터를 모아 패턴을 분석한다", type: "analytic" },
+      { text: "완전히 다른 접근법을 시도해본다", type: "creative" }
+    ]
+  },
+  {
+    situation: "📍 예상 밖의 요청",
+    text: "갑자기 예상 못한 업무 요청이 들어왔다.",
+    options: [
+      { text: "일단 빠르게 처리하고 본다", type: "fast" },
+      { text: "우선순위와 리스크를 먼저 따진다", type: "cautious" },
+      { text: "관련 팀원과 상황을 공유하고 상의한다", type: "collab" },
+      { text: "왜 이 요청이 생겼는지부터 파악한다", type: "root" }
+    ]
+  },
+  {
+    situation: "📍 막막한 프로젝트",
+    text: "어디서부터 시작해야 할지 막막한 프로젝트를 맡았다.",
+    options: [
+      { text: "일단 작은 것부터 빠르게 시작해본다", type: "fast" },
+      { text: "브레인스토밍으로 다양한 방향을 그려본다", type: "creative" },
+      { text: "관련 자료와 선례를 꼼꼼히 조사한다", type: "analytic" },
+      { text: "경험 있는 동료에게 조언을 구한다", type: "collab" }
+    ]
+  },
+  {
+    situation: "📍 의견이 갈릴 때",
+    text: "팀 내에서 해결 방법에 대한 의견이 갈렸다.",
+    options: [
+      { text: "각 방법의 장단점을 데이터로 비교한다", type: "analytic" },
+      { text: "리스크가 적은 방법을 신중히 고른다", type: "cautious" },
+      { text: "모두의 의견을 조율해 합의점을 찾는다", type: "collab" },
+      { text: "근본적으로 무엇이 맞는지부터 따진다", type: "root" }
+    ]
+  },
+  {
+    situation: "📍 실패했을 때",
+    text: "시도했던 해결책이 실패로 끝났다.",
+    options: [
+      { text: "빠르게 다른 방법으로 재시도한다", type: "fast" },
+      { text: "왜 실패했는지 원인을 깊이 파고든다", type: "root" },
+      { text: "실패 데이터를 분석해서 개선점을 찾는다", type: "analytic" },
+      { text: "완전히 새로운 발상으로 접근해본다", type: "creative" }
+    ]
+  },
+  {
+    situation: "📍 업무 스타일",
+    text: "당신이 문제를 해결할 때 가장 중요하게 여기는 것은?",
+    options: [
+      { text: "정확한 근거와 논리", type: "analytic" },
+      { text: "속도와 실행력", type: "fast" },
+      { text: "안정성과 리스크 관리", type: "cautious" },
+      { text: "팀워크와 소통", type: "collab" }
+    ]
+  }
+];
+
+/* ══════════════════════════════════════
+   6가지 문제해결 유형
+══════════════════════════════════════ */
+const TYPES = {
+  analytic: {
+    emoji: "📊", name: "분석형 해결사", badge: "ANALYTIC",
+    quote: "우리는 새로운 시도를 통해 해답을 찾아 갑니다.",
+    desc: "데이터와 근거를 바탕으로 문제에 접근하는 타입이에요. \"원래 이렇게 해왔으니까\" 대신 논리적으로 재검토하고, 감이 아닌 사실로 판단합니다. 팀의 의사결정에 신뢰를 더하는 존재예요.",
+    traits: ["논리력", "데이터 기반", "객관성", "꼼꼼함", "근거 중시"],
+    tip: "💡 가끔은 완벽한 데이터가 없어도 빠르게 판단해야 할 때가 있어요. 균형을 잡아보세요!"
+  },
+  creative: {
+    emoji: "💡", name: "발상형 해결사", badge: "CREATIVE",
+    quote: "황당하지만 일리있는 아이디어에서 해답이 나옵니다.",
+    desc: "틀을 깨는 아이디어로 문제를 새롭게 바라보는 타입이에요. 남들이 당연하게 여기는 것에 의문을 던지고, 브레인스토밍에서 빛을 발합니다. 조직에 신선한 바람을 불어넣는 존재예요.",
+    traits: ["창의력", "발상 전환", "유연성", "호기심", "혁신"],
+    tip: "💡 아이디어가 아무리 좋아도 실행 가능성 검토는 꼭 필요해요. 현실적인 시선도 챙겨보세요!"
+  },
+  fast: {
+    emoji: "⚡", name: "속전속결형 해결사", badge: "FAST",
+    quote: "사소한 업무라도 끝까지 책임지고 마무리합니다.",
+    desc: "고민보다 행동이 빠른 타입이에요. 완벽한 계획을 기다리기보다 일단 시도하며 답을 찾아갑니다. 촉박한 마감이나 위기 상황에서 특히 진가를 발휘해요.",
+    traits: ["실행력", "순발력", "결단력", "추진력", "민첩함"],
+    tip: "💡 속도만큼 정확성도 중요해요. 가끔은 잠깐 멈춰서 점검하는 시간도 가져보세요!"
+  },
+  collab: {
+    emoji: "🤝", name: "협업형 해결사", badge: "COLLAB",
+    quote: "우리는 편견 없이 듣고, 두려움 없이 말합니다.",
+    desc: "혼자보다 함께 풀어가는 것을 선호하는 타입이에요. 다양한 의견을 모아 더 나은 답을 찾고, 팀 전체의 지혜를 활용합니다. 조율과 합의를 이끄는 데 탁월해요.",
+    traits: ["소통력", "경청", "조율력", "포용력", "팀워크"],
+    tip: "💡 의견을 모으는 데 시간이 오래 걸릴 수 있어요. 때로는 빠른 결단도 필요해요!"
+  },
+  cautious: {
+    emoji: "🛡️", name: "신중형 해결사", badge: "CAUTIOUS",
+    quote: "우리는 작은 유혹 앞에서도 언제나 원칙을 선택합니다.",
+    desc: "리스크를 꼼꼼히 따지고 안정적으로 접근하는 타입이에요. 성급한 결정보다 확실한 검증을 선호하며, 실수를 최소화합니다. 안정감 있는 결과를 만들어내는 존재예요.",
+    traits: ["신중함", "리스크 관리", "꼼꼼함", "안정성", "체계성"],
+    tip: "💡 너무 신중하면 기회를 놓칠 수 있어요. 확신이 서면 과감하게 실행해보세요!"
+  },
+  root: {
+    emoji: "🔍", name: "근본해결형 해결사", badge: "ROOT CAUSE",
+    quote: "\"원래 이렇게 해왔으니까\" 대신 근거 기반으로 재검토합니다.",
+    desc: "표면적인 증상이 아닌 근본 원인을 파고드는 타입이에요. 임시방편을 싫어하고, 같은 문제가 반복되지 않도록 뿌리부터 해결합니다. 장기적으로 조직을 단단하게 만드는 존재예요.",
+    traits: ["통찰력", "근본 접근", "끈기", "구조적 사고", "재발 방지"],
+    tip: "💡 근본 원인을 찾는 데 시간이 걸릴 수 있어요. 급할 땐 임시 조치도 필요하다는 걸 기억하세요!"
+  }
+};
+
+let currentQ = 0;
+let scores = { analytic:0, creative:0, fast:0, collab:0, cautious:0, root:0 };
+
+function startQuiz() {
+  currentQ = 0;
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  const pct = Math.round((currentQ / total) * 100);
+
+  document.getElementById('progress-text').textContent = `${currentQ + 1} / ${total}`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-situation').textContent = q.situation;
+  document.getElementById('q-text').textContent = q.text;
+
+  // 카드 애니메이션 재시작
+  const card = document.getElementById('q-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-num">${i+1}</span>${opt.text}`;
+    btn.onclick = () => selectOption(opt.type, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(type, btn) {
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add('selected');
+
+  scores[type] = (scores[type] || 0) + 1;
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const maxScore = Math.max(...Object.values(scores));
+  const topTypes = Object.entries(scores).filter(([k,v]) => v === maxScore).map(([k]) => k);
+  const topType = topTypes[Math.floor(Math.random() * topTypes.length)];
+  const type = TYPES[topType];
+
+  document.getElementById('res-emoji').textContent = type.emoji;
+  document.getElementById('res-name').textContent = type.name;
+  document.getElementById('res-badge').textContent = type.badge;
+  document.getElementById('res-quote').textContent = '"' + type.quote + '"';
+  document.getElementById('res-desc').textContent = type.desc;
+  document.getElementById('res-traits').innerHTML = type.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('res-tip').textContent = type.tip;
+}
+</script>
+</body>
+</html>
